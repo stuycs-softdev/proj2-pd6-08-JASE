@@ -10,7 +10,7 @@ def getTeachers():
     for x in result.find("table").find_all("tr"):
         name = x.find("td").find("a")
         if name:
-            r.append(name.get_text())
+            r.append(name.get_text().split(". ")[1])
 
     return r
 
