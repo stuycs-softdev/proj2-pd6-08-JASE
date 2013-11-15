@@ -1,9 +1,19 @@
 
+## ACCESS TEACHER LIST:
+## getTeachers(SORT)
+## available options:
+## - first
+## - last (DEFAULT if left blank)
+## - title
+##
+## returns dictionary of sorted results
+
+
 import urllib
 from bs4 import BeautifulSoup
 from operator import itemgetter
 
-def getTeachers():
+def getTeachers(s=None):
     url = "http://stuy.enschool.org/apps/staff/"
     result = BeautifulSoup(urllib.urlopen(url))
 
@@ -19,13 +29,13 @@ def getTeachers():
                 "title":x.find_all("td")[1].get_text()
                 })
                 
-#            r.append([n[0],n[1]])
 
-
+    if r and s in r[0].keys():
+        r = sorted(r, key=itemgetter(s))
+    
     return r
 
 if __name__ == "__main__":
-    data = getTeachers()
-    data = sorted(data, key=itemgetter("title"))
+    data = getTeachers("gasdf")
     for x in data:
-        print("%s,%s\t%s"%(x['last'],x['first'],x['title']))
+        print("%s,%s,%s"%(x['last'],x['first'],x['title']))
