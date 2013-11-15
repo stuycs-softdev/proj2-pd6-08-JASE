@@ -6,7 +6,7 @@ teachers:
 	INT id              - unique id number
 	STRING first        - first name
 	STRING last         - last name
-	address {
+	address[]{
 	     STRING address - address
 	     STRING map     - Google Maps url
 	     }	     
