@@ -10,6 +10,7 @@ result = BeautifulSoup(url)
 data = []
 for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
     phoneNum = x.find('span')
+    x.find('span').replaceWith(' ');
     if(phoneNum):
         phoneNum = phoneNum.get_text()   
     else:
@@ -25,11 +26,12 @@ def pFind(first,last):
     data = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
         phoneNum = x.find('span')
+        x.find('span').replaceWith(' ');
         if(phoneNum):
             phoneNum = phoneNum.get_text()
         else:
             phoneNum = 'UnListed PhoneNumber'
-            address = x
+            address = x.get_text()
             data.append({"address":address,
                          "phoneNum":phoneNum})
 
