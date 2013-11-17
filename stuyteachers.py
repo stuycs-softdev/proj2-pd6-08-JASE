@@ -13,6 +13,8 @@ import urllib
 from bs4 import BeautifulSoup
 from operator import itemgetter
 
+from pymongo import MongoClient
+
 def getTeachers(s=None):
     url = "http://stuy.enschool.org/apps/staff/"
     result = BeautifulSoup(urllib.urlopen(url))
@@ -35,7 +37,18 @@ def getTeachers(s=None):
     
     return r
 
+def teachersToDatabase():
+    c = MongoClient()
+    c.teachers.Collections.remove()
+    
+    teachers = getTeachers()
+    for x in range(0,len(teachers)):
+        teachers[x]["id"] = x
+        c.teachers.Collections.insert(teachers[x])
+
+
 if __name__ == "__main__":
-    data = getTeachers("gasdf")
-    for x in data:
-        print("%s,%s,%s"%(x['last'],x['first'],x['title']))
+    teachersToDatabase()
+#    data = getTeachers("gasdf")
+#    for x in data:
+#        print("%s,%s,%s"%(x['last'],x['first'],x['title']))
