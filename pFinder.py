@@ -24,7 +24,6 @@ def pFind(first,last):
     result = BeautifulSoup(url)
     data = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
-        print(data)
         phoneNum = x.find('span')
         x.find('span').replaceWith(' ');
         if(phoneNum):
@@ -36,5 +35,8 @@ def pFind(first,last):
                  "phoneNum":phoneNum})
     return data
 
-print(pFind('Kevin','Li'))
 
+if __name__ == "__main__":
+    first = raw_input("Enter first name: ")
+    last = raw_input("Enter last name: ")
+    print(pFind(first,last))
