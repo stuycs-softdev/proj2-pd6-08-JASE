@@ -7,11 +7,31 @@ from bs4 import BeautifulSoup
 
 url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-Kevin-Li")
 result = BeautifulSoup(url)
-result = result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'})
+data = []
+for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
+    phoneNum = x.find("br", attrs={ 'span class' : 'phoneNumber'})
+    if(phoneNum == None):
+        phoneNum = 'None'
+    else:
+        phoneNum = phoneNum.get_text()
+    address = x.get_text()
+    data.append({"address":address,
+                 "phoneNum":phoneNum})
+
 
 def pFind(first,last):
     url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-%s-%s/0/", first,last).find("li")
     result = BeautifulSoup(url)
+    data = []
+    for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
+        phoneNum = x.find("br", attrs={ 'span class' : 'phoneNumber'})
+        if(phoneNum == None):
+            phoneNum = 'None'
+        else:
+            phoneNum = phoneNum.get_text()
+            address = x.get_text()
+            data.append({"address":address,
+                         "phoneNum":phoneNum})
 
 
-print(result);
+print(data[0])
