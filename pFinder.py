@@ -9,11 +9,11 @@ url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-Kevin-Li")
 result = BeautifulSoup(url)
 data = []
 for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
-    phoneNum = x.find("br", attrs={ 'span class' : 'phoneNumber'})
-    if(phoneNum == None):
-        phoneNum = 'None'
+    phoneNum = x.find('span')
+    if(phoneNum):
+        phoneNum = phoneNum.get_text()   
     else:
-        phoneNum = phoneNum.get_text()
+        phoneNum = 'UnListed PhoneNumber'
     address = x.get_text()
     data.append({"address":address,
                  "phoneNum":phoneNum})
@@ -24,14 +24,15 @@ def pFind(first,last):
     result = BeautifulSoup(url)
     data = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
-        phoneNum = x.find("br", attrs={ 'span class' : 'phoneNumber'})
-        if(phoneNum == None):
-            phoneNum = 'None'
-        else:
+        phoneNum = x.find('span')
+        if(phoneNum):
             phoneNum = phoneNum.get_text()
-            address = x.get_text()
+        else:
+            phoneNum = 'UnListed PhoneNumber'
+            address = x
             data.append({"address":address,
                          "phoneNum":phoneNum})
+
 
 
 print(data[0])
