@@ -28,8 +28,21 @@ def getPageRatings(page_num):
             name = a[0].find("span").get_text()
             overall = a[1].find("span").get_text()
             subject = a[2].get_text()
-        
-            results.append({"name":name, "overall":overall, "subject":subject})
+            page_link = a[0].find("a")['href']
+            
+            page_link = "http://www.ratemyteachers.com" + page_link
+
+            page2 = BeautifulSoup(urllib.urlopen(page_link))
+           
+            rlist = page2.find_all("ul", {"class" : "stars"})
+
+            easiness = len(rlist[0].find_all("li", {"class" : "yellowStar"}))
+            helpful = len(rlist[1].find_all("li", {"class" : "yellowStar"}))
+            clarity = len(rlist[3].find_all("li", {"class" : "yellowStar"}))
+               
+               
+
+            results.append({"name":name, "overall":overall, "subject":subject, "easiness":easiness, "helpfulness":helpful, "clarity":clarity})
 
     return results
 
