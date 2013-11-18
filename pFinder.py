@@ -1,6 +1,7 @@
 import urllib
 from bs4 import BeautifulSoup
 
+#Tester
 def test():
     url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-Kevin-Li")
     result = BeautifulSoup(url)
@@ -18,7 +19,7 @@ def test():
     return data
 
 
-
+#Finds the info on someone by using first and last name.
 def pFind(first,last):
     url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-"+ first + "-" +last)
     result = BeautifulSoup(url)
@@ -39,4 +40,8 @@ def pFind(first,last):
 if __name__ == "__main__":
     first = raw_input("Enter first name: ")
     last = raw_input("Enter last name: ")
-    print(pFind(first,last))
+    data = pFind(first,last)
+    if(list(data) == 0):
+        print(first + " " + last + " doesn't exist")
+    else:
+        print(pFind(first,last))
