@@ -14,5 +14,5 @@ We will create a site that gives a teacher's rating,a potential address,a pictur
 This should not be taken seriously and if we offend anyone, tell us and we will remove you from the list.
 
 ### TimeLine
--Scrapers all done by 11/18/13
--FrontEnd done by 11/21/13
+- Scrapers all done by 11/18/13
+- FrontEnd done by 11/21/13
