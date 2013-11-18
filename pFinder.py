@@ -1,6 +1,8 @@
 import urllib
 from bs4 import BeautifulSoup
 
+from pymongo import MongoClient
+
 #Tester
 def test():
     url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-Kevin-Li")
@@ -36,12 +38,17 @@ def pFind(first,last):
                  "phoneNum":phoneNum})
     return data
 
+#Puts the information into a database
+def AddtoData(first,last):
+    d = MongoClient()
+    
+    person = pFind(first,last)
 
 if __name__ == "__main__":
     first = raw_input("Enter first name: ")
     last = raw_input("Enter last name: ")
     data = pFind(first,last)
     if(list(data) == 0):
-        print(first + " " + last + " doesn't exist")
+        print("This guy doesn't exist")
     else:
         print(pFind(first,last))
