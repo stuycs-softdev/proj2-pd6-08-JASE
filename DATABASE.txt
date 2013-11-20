@@ -1,6 +1,5 @@
 
 
-
 teachers:
 	keys:               | description
 	INT id              - unique id number
@@ -11,6 +10,7 @@ teachers:
 	     STRING map     - Google Maps url
 	     }	     
 	STRING phone        - phone number
+	STRING images	    - Google image url
 	ratemyteachers {    - info from ratemyteachers.com
 	     INT overall   
 	     INT easiness
