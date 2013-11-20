@@ -5,17 +5,16 @@ from flask import render_template
 app = Flask(__name__)
 
 @app.route("/")
-def gmap():
-	if request.method=="GET":
-		return render_template("index.html")
-	else:
-		button = request.form['button']
-		if button=="Submit":
-			address = request.form['address']
-			return render_template("map.html",addr=address)
-		else:
-			return render_template("index.html")
+def gmap(addr,zipc):
+    c = MongoClient()
+    addr = "maps.googleapis.com/maps/api/staticmap?center=" + addr + " " + zip + "&markers=color:blue%7Clabel:C%7C" + addr + " " + zip + "&zoom=16&size=640x640&sensor=false"
+    for x in range(0,len(teachers)):
+        teachers[x]["address"] = x
+        c.teachers.Collections.insert(addr[x])
 
-if __name__=="__main__":
-	app.debug=True
-	app.run(host="0.0.0.0",port=5000)
+#maps.googleapis.com/maps/api/staticmap?center={{addr}}&markers=color:blue%7Clabel:C%7C{{addr}}&zoom=16&size=640x640&sensor=false
+if __name__ == "__main__":
+    addr = raw_input("Enter address: ")
+    zipc = raw_input("Enter zip code: ")
+    data = gmap(addr,zipc)
+    print("maps.googleapis.com/maps/api/staticmap?center=" + addr + " " + zip + "&markers=color:blue%7Clabel:C%7C" + addr + " " + zip + "&zoom=16&size=640x640&sensor=false")
