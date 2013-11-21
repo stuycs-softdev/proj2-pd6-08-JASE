@@ -1,7 +1,6 @@
 import urllib
 from bs4 import BeautifulSoup
 
-from pymongo import MongoClient
 
 #Tester
 def test():
@@ -21,7 +20,7 @@ def test():
     return data
 
 
-#Finds the info on someone by using first and last name.
+#Finds the info on someone by using first and last name.If not in NY, search NJ
 def pFind(first,last):
     url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-"+ first + "-" +last)
     result = BeautifulSoup(url)
@@ -36,13 +35,29 @@ def pFind(first,last):
         address = x.get_text()
         data.append({"address":address,
                  "phoneNum":phoneNum})
+    if(len(data) == 0):
+        data = pFindNJ(first,last)
     return data
 
-#Puts the information into a database
-def AddtoData(first,last):
-    d = MongoClient()
-    
-    person = pFind(first,last)
+#Finds if person is in NJ, if not returns none found
+def pFindNJ(first,last):
+    url = urllib.urlopen("http://www.peoplefinder.com/people-search/NJ-"+ first + "-" +last)
+    result = BeautifulSoup(url)
+    data = []
+    for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
+        phoneNum = x.find('span')
+        x.find('span').replaceWith(' ');
+        if(phoneNum):
+            phoneNum = phoneNum.get_text()
+        else:
+            phoneNum = 'UnListed PhoneNumber'
+        address = x.get_text()
+        data.append({"address":address,
+                 "phoneNum":phoneNum})
+        if(len(data) == 0):
+            data.append({"address":"None found",
+                         "phoneNum":"None found"})
+        return data
 
 if __name__ == "__main__":
     first = raw_input("Enter first name: ")
