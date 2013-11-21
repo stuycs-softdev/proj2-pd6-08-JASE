@@ -15,6 +15,10 @@ from operator import itemgetter
 
 from pymongo import MongoClient
 
+
+# our functions
+import pFinder
+
 def getTeachers(s=None):
     url = "http://stuy.enschool.org/apps/staff/"
     result = BeautifulSoup(urllib.urlopen(url))
@@ -43,12 +47,25 @@ def teachersToDatabase():
     
     teachers = getTeachers()
     for x in range(0,len(teachers)):
-        teachers[x]["id"] = x
+        t = teachers[x]
+        t["id"] = x
+
+        # array for multiple address results of teachers
+        t["address"] = []
+        addr = pFinder.pFind(t["first"],t["last"])
+
+        for z in addr:
+            # z["map"] = gmap()  --- placeholder for Google Maps function
+            t["address"].append(z)
+
+        
+            
+
         c.teachers.Collections.insert(teachers[x])
 
 
 if __name__ == "__main__":
     teachersToDatabase()
-#    data = getTeachers("gasdf")
+#    data = getTeachers()
 #    for x in data:
 #        print("%s,%s,%s"%(x['last'],x['first'],x['title']))

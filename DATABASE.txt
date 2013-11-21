@@ -8,8 +8,8 @@ teachers:
 	address[]{
 	     STRING address - address
 	     STRING map     - Google Maps url
+	     STRING phone   - phone number
 	     }	     
-	STRING phone        - phone number
 	STRING images	    - Google image url
 	ratemyteachers {    - info from ratemyteachers.com
 	     INT overall   
