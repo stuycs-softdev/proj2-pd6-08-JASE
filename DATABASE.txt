@@ -3,6 +3,8 @@
 teachers:
 	keys:               | description
 	INT id              - unique id number
+	INT salary          - teacher's salary
+        INT salary_year     - year of that salary
 	STRING first        - first name
 	STRING last         - last name
 	address[]{
