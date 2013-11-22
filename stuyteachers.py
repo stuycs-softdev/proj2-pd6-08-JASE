@@ -17,7 +17,8 @@ from pymongo import MongoClient
 
 
 # our functions
-import pFinder
+import pFinder # gets addresses and phone numbers
+import salary  # gets salary
 
 def getTeachers(s=None):
     url = "http://stuy.enschool.org/apps/staff/"
@@ -49,6 +50,12 @@ def teachersToDatabase():
     for x in range(0,len(teachers)):
         t = teachers[x]
         t["id"] = x
+
+
+        # add in teacher's salary
+        gs = salary.getSalary(t["first"],t["last"])
+        t["salary"] = int(gs[0])
+        t["salary_year"] = int(gs[1])
 
         # array for multiple address results of teachers
         t["address"] = []
