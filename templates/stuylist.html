@@ -24,39 +24,29 @@
 	  </div>
 	  <div class="navbar-collapse collapse">
 	    <ul class="nav navbar-nav">
-	      <li class="active"><a href="/">Home</a></li>
-	      <li class="active"><a href="/">About US</a></li>
-	      <li class="active"><a href="/">Stuyvesant Teachers</a></li>
-	    </ul>
-	    <ul class="nav navbar-nav navbar-right">
-	      <li>
-		<form method="POST">
-		  <div action="search.php" class="form-search">
-		    <div class="input-append">
-		      <input type="text" class="span2 search-query" placeholder="Search for a Stuyvesant Teacher here" autofocus>
-		      <button type="submit" class="btn btn-primary">Search<i class="icon-search icon-white"></i></button>
-		    </div>
-		  </div>
-		</form>
-	      </li>
+	      <li class="active"><a href="/search">Home</a></li>
+	      <li class="active"><a href="/about">About US</a></li>
+	      <li class="active"><a href="/stuylist">Stuyvesant Teachers</a></li>
 	    </ul>
 	  </div>
 	</div>
       </nav>
       
       <!--small search query-->
-      <div class="well">
+      <div class="jumbotron">
 	<form method="POST">
 	  <div class="container" style="text-align:center">
 	    <div action="search.php" class="form-search">
 	      <div class="input-append">
-		  <input type="text" class="span2 search-query" placeholder="Search for a Stuyvesant Teacher here" autofocus>
-		  <button type="submit" class="btn btn-primary">Search<i class="icon-search icon-white"></i></button>
+		  <input name="search" type="text" class="span2 search-query" style="padding: 4px 20px; font-size:18.5px;" placeholder="Search for a Stuyvesant Teacher here" autofocus>
+		  <button type="submit" class="btn btn-primary btn-lg">Search<i class="icon-search icon-white"></i></button>
 	      </div>
 	    </div>
 	  </div>
       </div>
 	
+      <!--List of teachers in Grid format-->
+
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="../static/bootstrap/js/bootstrap.min.js"></script>
       </form>

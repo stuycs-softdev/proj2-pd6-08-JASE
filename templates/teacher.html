@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../static/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="../static/bootstrap/css/search.css" rel="stylesheet">
+    <link href="../static/bootstrap/css/teacher.css" rel="stylesheet">
     <link rel="shortcut icon" href="../static/stalkmyteachers.jpg">
   </head>
   
@@ -31,19 +31,13 @@
       </div>
     </nav>
     
-    <!--Search code -->
-    <div class="container" style="text-align:center">
-      <form method="POST">
-	<form class="form-search">
-	  <h3 class="form-search-heading">Search for a Teacher in Stuyvesant</h3>
-	  <input name="search" type="text" class="input-lg search-query" placeholder="Enter name" required autofocus>
-	  <button type="submit" href="/" class="btn btn-lg btn-primary">Search</button>
-      </form>
+    <!--Teacher Image-->
+    <div class="container" style="text-align: center">
+      <h1>{{first}} {{last}}</h1>
+    
     </div>
     
-      
-      <script src="https://code.jquery.com/jquery.js"></script>
-      <script src="../static/bootstrap/js/bootstrap.min.js"></script>
-    </form>
-  </body><meta name="viewport" content="width=100, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+    </body><meta name="viewport" content="width=100, initial-scale=1.0">
 </html>
