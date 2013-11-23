@@ -10,6 +10,7 @@
 
 
 import urllib
+import json
 from bs4 import BeautifulSoup
 from operator import itemgetter
 
@@ -98,21 +99,79 @@ def teachersToDatabase():
     for x in range(0,len(res)):
         res[x]["id"] = x
         c.ratemt.Collections.insert(res[x])
+
+
+
+
+    # pair up with ratemyteachers
+    for x in c.ratemt.Collections.find():
+        a = x["name"].split(" ")
+        if len(a) > 1:
+            c.ratemt.Collections.update({"id":x["id"]},{"$set":{"matched":False,"first":a[0],"last":a[1]}})
+        else:
+            c.ratemt.Collections.update({"id":x["id"]},{"$set":{"matched":False,"first":"","last":a[0]}})
+
     
 
+    perfect = [] # perfect matches (first AND last)
+    close = []   # close matches (last)
+    no = []      # no matches
+
+    for x in c.teachers.Collections.find():
+        if "first" in x.keys() and "last" in x.keys():
+            k = c.ratemt.Collections.find_one({"first":x["first"],"last":x["last"],"matched":False})
+
+            if k:
+                perfect.append(k)
+                c.ratemt.Collections.update(
+                    {"id":k["id"]},
+                    {"$set":{
+                            "matched":True,
+                            "ratemyteachers":{
+                                "overall":k["overall"],
+                                "easiness":k["easiness"],
+                                "helpfulness":k["helpfulness"],
+                                "clarity":k["clarity"]#,
+#                                "knowledgeable":k["knowledgeable"],
+#                                "exam_difficulty":k["exam_difficulty"],
+#                                "textbook_use":k["textbook_use"],
+#                                "num_reviews":k["num_reviews"]
+                                }
+                            }
+                     })
+            
+            else:
+                k = c.ratemt.Collections.find({"last":x["last"],"matched":False})
+                if k.count() == 1:
+                    close.append([x,k])
+                else:
+                    no.append(x)
+
+
+    print("Stuyvesant teachers matched with ratemyteachers.com results:")
+    print("%d perfect matches"%(len(perfect)))
+    print("%d close matches"%(len(close)))
+    print("%d no matches"%(len(no)))
+
+    print("Done.")
+    
+
+
+
+    
 
 
 if __name__ == "__main__":
-    c = MongoClient()
-    c.ratemt.Collections.remove()
-    print("Searching up results from ratemyteachers.com:")
-    
-    res = ratemt.getRatings()
-    
-    for x in range(0,len(res)):
-        res[x]["overall"] = int(res[x]["overall"].replace("%",""))
-        res[x]["id"] = x
-        c.ratemt.Collections.insert(res[x])
+#    c = MongoClient()
+#    c.ratemt.Collections.remove()
+#    print("Searching up results from ratemyteachers.com:")
+#    
+#    res = ratemt.getRatings()
+#    
+#    for x in range(0,len(res)):
+#        res[x]["overall"] = int(res[x]["overall"].replace("%",""))
+#        res[x]["id"] = x
+#        c.ratemt.Collections.insert(res[x])
 
-#    teachersToDatabase()
+    teachersToDatabase()
 
