@@ -19,6 +19,7 @@ from pymongo import MongoClient
 # our functions
 import pFinder # gets addresses and phone numbers
 import salary  # gets salary
+import ratemt  # ratemyteachers.com
 
 def getTeachers(s=None):
     url = "http://stuy.enschool.org/apps/staff/"
@@ -45,6 +46,8 @@ def getTeachers(s=None):
 def teachersToDatabase():
     c = MongoClient()
     c.teachers.Collections.remove()
+
+    print("Adding in teachers to database...")
     
     teachers = getTeachers()
     for x in range(0,len(teachers)):
@@ -84,12 +87,32 @@ def teachersToDatabase():
             pr += "No address found"
         pr += "\n"
         print(pr)
-#        print("[%d]\t$%s\t%s\t%s\t%s\t%s"%(x,t["salary"],t["first"],t["last"],t["address"][0]["phoneNum"],t["address"][0]["address"]))
+
+
+
+    # compare ratemyteachers
+    print("Searching up results from ratemyteachers.com:")
+    
+    res = ratemt.getRatings()
+    
+    for x in range(0,len(res)):
+        res[x]["id"] = x
+        c.ratemt.Collections.insert(res[x])
+    
 
 
 
 if __name__ == "__main__":
-    teachersToDatabase()
-#    data = getTeachers()
-#    for x in data:
-#        print("%s,%s,%s"%(x['last'],x['first'],x['title']))
+    c = MongoClient()
+    c.ratemt.Collections.remove()
+    print("Searching up results from ratemyteachers.com:")
+    
+    res = ratemt.getRatings()
+    
+    for x in range(0,len(res)):
+        res[x]["overall"] = int(res[x]["overall"].replace("%",""))
+        res[x]["id"] = x
+        c.ratemt.Collections.insert(res[x])
+
+#    teachersToDatabase()
+

@@ -44,6 +44,8 @@ def getPageRatings(page_num):
 
             results.append({"name":name, "overall":overall, "subject":subject, "easiness":easiness, "helpfulness":helpful, "clarity":clarity})
 
+            print("%s (%s)\t%s, %d, %d, %d"%(name,subject,overall,easiness,helpful,clarity))
+
     return results
 
 
