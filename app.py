@@ -13,9 +13,9 @@ app = Flask(__name__)
 def index():
     r = ""
    
-#    r += html.table_overpaid(5)
-#    r += html.table_underpaid(5)
-#    r += html.table_highest("salary","Salary",10)
+    r += html.table_overpaid(5)
+    r += html.table_underpaid(5)
+    r += html.table_highest("salary","Salary",10)
 
     return r
 
