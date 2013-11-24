@@ -13,13 +13,10 @@ teachers:
 	     STRING phone   - phone number
 	     }	     
 	STRING images	    - Google image url
-	ratemyteachers {    - info from ratemyteachers.com
-	     INT overall   
-	     INT easiness
-	     INT helpfulness
-	     INT clarity
-	     INT knowledgeable
-	     INT textbook_use
-	     INT num_reviews
-	     }	    	       
+        INT rmt_overall     - ratemyteachers.com
+        INT rmt_easiness    - ratemyteachers.com
+	INT rmt_helpfulness - ratemyteachers.com
+        INT rmt_clarity     - ratemyteachers.com
+        INT rmt_num_reviews - ratemyteachers.com
+
 

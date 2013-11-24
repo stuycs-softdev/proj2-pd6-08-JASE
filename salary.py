@@ -13,15 +13,15 @@ def getSalary(first,last):
 
     sal = json.loads(result.read())
     
-    try:
-        for x in sal["data"]:
-            if "Department OF Education" in x:
-                salary = x[2]
-                year = x[5]
 
-                return [salary,year]
-    except:
-        return [-1,-1]
+    for x in sal["data"]:
+        if "Department OF Education" in x:
+            salary = x[2]
+            year = x[5]
+
+            return [salary,year]
+
+    return [-1,-1]
 
 
 if __name__ == "__main__":    

@@ -10,7 +10,7 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     r = ""
-    s = stuyteachers.get("last")
+    s = stuyteachers.get("salary",-1)
 
 
     r = "<table>"

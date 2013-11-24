@@ -69,7 +69,11 @@ def teachersToDatabase():
             # z["map"] = gmap()  --- placeholder for Google Maps function
             t["address"].append(z)
 
-        
+        t["rmt_overall"] = -1
+        t["rmt_easiness"] = -1
+        t["rmt_helpfulness"] = -1
+        t["rmt_clarity"] = -1
+        t["rmt_num_reviews"] = 0
             
 
         c.teachers.Collections.insert(teachers[x])
@@ -123,27 +127,13 @@ def teachersToDatabase():
 
             if k:
                 perfect.append(k)
-                c.ratemt.Collections.update(
-                    {"id":k["id"]},
-                    {"$set":{
-                            "matched":True,
-                            "ratemyteachers":{
-                                "overall":k["overall"],
-                                "easiness":k["easiness"],
-                                "helpfulness":k["helpfulness"],
-                                "clarity":k["clarity"]#,
-#                                "knowledgeable":k["knowledgeable"],
-#                                "exam_difficulty":k["exam_difficulty"],
-#                                "textbook_use":k["textbook_use"],
-#                                "num_reviews":k["num_reviews"]
-                                }
-                            }
-                     })
+                teacher_update(x,k)
             
             else:
                 k = c.ratemt.Collections.find({"last":x["last"],"matched":False})
                 if k.count() == 1:
                     close.append([x,k])
+                    teacher_update(x,k[0])
                 else:
                     no.append(x)
 
@@ -156,6 +146,17 @@ def teachersToDatabase():
     print("Done.")
     
 
+def teacher_update(x,k):
+    c.ratemt.Collections.update({"id":k["id"]},{"$set":{"matched":True}})
+    c.teachers.Collections.update(
+        {"id":x["id"]},
+        {"$set":{
+                "rmt_overall":k["overall"],
+                "rmt_easiness":k["easiness"],
+                "rmt_helpfulness":k["helpfulness"],
+                "rmt_clarity":k["clarity"]
+                }
+         })
 
 
 
@@ -188,5 +189,26 @@ if __name__ == "__main__":
 #        res[x]["id"] = x
 #        c.ratemt.Collections.insert(res[x])
 
-    teachersToDatabase()
+#    teachersToDatabase()
+
+    c = MongoClient()
+    for x in c.ratemt.Collections.find():
+        c.ratemt.Collections.update({"id":x["id"]},{"$set":{"matched":False}})
+
+    for x in c.teachers.Collections.find():
+        if "first" in x.keys() and "last" in x.keys():
+            k = c.ratemt.Collections.find_one({"first":x["first"],"last":x["last"],"matched":False})
+
+            if k:
+
+                teacher_update(x,k)
+            
+            else:
+                k = c.ratemt.Collections.find({"last":x["last"],"matched":False})
+                if k.count() == 1:
+
+                    teacher_update(x,k[0])
+
+
+
 
