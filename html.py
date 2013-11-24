@@ -2,37 +2,41 @@
 import stuyteachers
 
 def table_overpaid(limit):
-    r = '<table><tr><th colspan="4" style="text-align:center;">Top '+str(limit)+' Overpaid Teachers</td></tr><tr><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
+    r = '<table class="table"><tr><th colspan="4" style="text-align:center;">Top '+str(limit)+' Overpaid Teachers</td></tr><tr><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
 
     count = 0
     for x in stuyteachers.get_overpaid(limit):
         count += 1
-        r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a></td><td>$%(salary)d</td><td>%(rmt_overall)d&#37;</td></tr>'%(x)
+        r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td><td>$%(salary)d</td><td style="text-align:center">%(rmt_overall)d&#37;</td></tr>'%(x)
 
     r += '</table>'
 
     return r
 
 def table_underpaid(limit):
-    r = '<table><tr><th colspan="4" style="text-align:center;">Top '+str(limit)+' Underpaid Teachers</td></tr><tr><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
+    r = '<table class="table"><tr><th colspan="4" style="text-align:center;">Top '+str(limit)+' Underpaid Teachers</td></tr><tr><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
 
     count = 0
     for x in stuyteachers.get_underpaid(limit):
         count += 1
-        r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a></td><td>$%(salary)d</td><td>%(rmt_overall)d&#37;</td></tr>'%(x)
+        r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td><td>$%(salary)d</td><td style="text-align:center">%(rmt_overall)d&#37;</td></tr>'%(x)
 
     r += '</table>'
 
     return r
 
 
-def table_highest(param,title,limit):
-    r = '<table><tr><th colspan="4" style="text-align:center;">Top %d - %s</td></tr><tr><th>&nbsp;</th><th>Teacher Name</th><th>%s</th></tr>'%(limit,title,title)
+def table_highestpaid(limit):
+    return table_highest("salary","Top "+str(limit)+" Highest Paid Teachers","Salary",limit)
+
+
+def table_highest(param,table_title,column_title,limit):
+    r = '<table class="table"><tr><th colspan="4" style="text-align:center;">%s</td></tr><tr><th>&nbsp;</th><th>Teacher Name</th><th>%s</th></tr>'%(table_title,column_title)
 
     count = 0
     for x in stuyteachers.get(param,-1,limit):
         count += 1
-        r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a></td>'%(x)
+        r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
 
         info = str(x[param])
         if param == "salary":
@@ -41,6 +45,36 @@ def table_highest(param,title,limit):
             info += "%"
 
         r += '<td>'+info+'</td></tr>'
+
+    r += '</table>'
+
+    return r
+
+
+def table_get(param, sort, limit, offset=0):
+    r = '<table class="table">'
+
+    count = offset
+    for x in stuyteachers.get(param, sort, limit, offset):
+        count += 1
+        r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
+
+        if x['salary'] != -1:
+            r += '<td>$%(salary)d</td>'%(x)
+        else:
+            r += '<td style="font-style:italic;">No Data</td>'
+        
+        if x['rmt_overall'] != -1:
+            r += '<td style="text-align:center;">%(rmt_overall)d&#37;</td>'%(x)
+        else:
+            r += '<td style="font-style:italic;">No Data</td>'
+
+        if len(x['address']) > 0:
+            r += '<td>%s<br />%s</td>'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
+        else:
+            r += '<td>No address found</td>'
+
+        r += '</tr>'
 
     r += '</table>'
 
