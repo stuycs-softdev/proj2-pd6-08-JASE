@@ -9,12 +9,15 @@ def test():
     data = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
         phoneNum = x.find('span')
-        x.find('span').replaceWith(' ');
+        tmp = x
+        tmp = tmp.find('br')
+        tmp.find('span').replaceWith(' ')
+        x = x.find('br').replaceWith(' ');
         if(phoneNum):
             phoneNum = phoneNum.get_text()   
         else:
             phoneNum = 'UnListed PhoneNumber'
-        address = x.get_text()
+        address = x.get_text() + tmp.get_text()
         data.append({"address":address,
                      "phoneNum":phoneNum})
     return data
@@ -27,12 +30,15 @@ def pFind(first,last):
     data = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
         phoneNum = x.find('span')
-        x.find('span').replaceWith(' ');
+        tmp = x
+        tmp = tmp.find('br')
+        tmp.find('span').replaceWith(' ')
+        x = x.find('br').replaceWith(' ');
         if(phoneNum):
             phoneNum = phoneNum.get_text()
         else:
             phoneNum = 'UnListed PhoneNumber'
-        address = x.get_text()
+        address = x.get_text() + tmp.get_text()
         data.append({"address":address,
                  "phoneNum":phoneNum})
     if(len(data) == 0):
@@ -45,13 +51,15 @@ def pFindNJ(first,last):
     result = BeautifulSoup(url)
     data = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
-        phoneNum = x.find('span')
-        x.find('span').replaceWith(' ');
+        tmp = x
+        tmp = tmp.find('br')
+        tmp.find('span').replaceWith(' ')
+        x = x.find('br').replaceWith(' ');
         if(phoneNum):
             phoneNum = phoneNum.get_text()
         else:
             phoneNum = 'UnListed PhoneNumber'
-        address = x.get_text()
+        address = x.get_text() + tmp.get_text()
         data.append({"address":address,
                  "phoneNum":phoneNum})
         if(len(data) == 0):
