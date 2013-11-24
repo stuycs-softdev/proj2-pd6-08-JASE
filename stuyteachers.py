@@ -69,7 +69,11 @@ def teachersToDatabase():
             # z["map"] = gmap()  --- placeholder for Google Maps function
             t["address"].append(z)
 
-        
+        t["rmt_overall"] = -1
+        t["rmt_easiness"] = -1
+        t["rmt_helpfulness"] = -1
+        t["rmt_clarity"] = -1
+        t["rmt_num_reviews"] = 0
             
 
         c.teachers.Collections.insert(teachers[x])
@@ -91,6 +95,17 @@ def teachersToDatabase():
 
 
 
+    do_ratemyteachers()
+
+    print("Done.")
+    
+
+
+
+
+def do_ratemyteachers():
+    c = MongoClient()
+    c.ratemt.Collections.remove()
     # compare ratemyteachers
     print("Searching up results from ratemyteachers.com:")
     
@@ -123,27 +138,13 @@ def teachersToDatabase():
 
             if k:
                 perfect.append(k)
-                c.ratemt.Collections.update(
-                    {"id":k["id"]},
-                    {"$set":{
-                            "matched":True,
-                            "ratemyteachers":{
-                                "overall":k["overall"],
-                                "easiness":k["easiness"],
-                                "helpfulness":k["helpfulness"],
-                                "clarity":k["clarity"]#,
-#                                "knowledgeable":k["knowledgeable"],
-#                                "exam_difficulty":k["exam_difficulty"],
-#                                "textbook_use":k["textbook_use"],
-#                                "num_reviews":k["num_reviews"]
-                                }
-                            }
-                     })
+                teacher_update(x,k)
             
             else:
                 k = c.ratemt.Collections.find({"last":x["last"],"matched":False})
                 if k.count() == 1:
                     close.append([x,k])
+                    teacher_update(x,k[0])
                 else:
                     no.append(x)
 
@@ -153,23 +154,64 @@ def teachersToDatabase():
     print("%d close matches"%(len(close)))
     print("%d no matches"%(len(no)))
 
-    print("Done.")
-    
+
+
+
+def teacher_update(x,k):
+    c = MongoClient()
+    c.ratemt.Collections.update({"id":k["id"]},{"$set":{"matched":True}})
+    c.teachers.Collections.update(
+        {"id":x["id"]},
+        {"$set":{
+                "rmt_overall":k["overall"],
+                "rmt_easiness":k["easiness"],
+                "rmt_helpfulness":k["helpfulness"],
+                "rmt_clarity":k["clarity"]
+                }
+         })
 
 
 
 
-
-def get(a,sort=1):
+def get(a,sort=1,limit=-1):
     # sort:
 
     c = MongoClient()
 
     r = []
 
-    for x in c.teachers.Collections.find().sort(a,sort):
+
+    k = c.teachers.Collections.find().sort(a,sort)
+    if limit > 0 :
+        k = k.limit(limit)
+    
+    for x in k: 
         r.append(x)
 
+    return r
+
+
+def get_overpaid(limit):
+    return get_payscale(limit,True)
+def get_underpaid(limit):
+    return get_payscale(limit,False)
+
+def get_payscale(limit,order):
+    c = MongoClient()
+    a = []
+
+    # salary and overall rating must be there
+    for x in c.teachers.Collections.find({"salary":{"$ne":-1},"rmt_overall":{"$ne":-1}}):
+        if x["rmt_overall"] != 0:
+            ratio = x["salary"]/x["rmt_overall"]
+
+            a.append([ratio,x])
+
+    a = sorted(a, key=itemgetter(0), reverse=order)
+
+    r = []
+    for x in range(min(limit,len(a))):
+        r.append(a[x][1])
     return r
 
 
@@ -188,5 +230,6 @@ if __name__ == "__main__":
 #        res[x]["id"] = x
 #        c.ratemt.Collections.insert(res[x])
 
-    teachersToDatabase()
+#    teachersToDatabase()
 
+    do_ratemyteachers()
