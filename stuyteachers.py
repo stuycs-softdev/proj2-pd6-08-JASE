@@ -158,6 +158,21 @@ def teachersToDatabase():
 
 
 
+
+
+def get(a,sort=1):
+    # sort:
+
+    c = MongoClient()
+
+    r = []
+
+    for x in c.teachers.Collections.find().sort(a,sort):
+        r.append(x)
+
+    return r
+
+
     
 
 
