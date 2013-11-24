@@ -12,7 +12,7 @@
   <body>
   
     <form method="GET">
-    <nav class="navbar navbar-inverse" role="navigation">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
 	<div class="navbar-header">
 	  <a class="navbar-brand" href="/">StalkMyTeachers</a>
@@ -38,6 +38,37 @@
       <h1>{{first}} {{last}}</h1>
       <img src="{{imgurl}}" />
       </div>
+    
+    <center>
+    <h3>Information About {{first}} {{last}}</h3>
+    </center>
+    <!--Teacher Info-->
+    <div class="row">
+      <div class="col-md-4" style="text-align: center">Address
+	<div class="row">
+	  <div class="col-md-12">{{address}}</div>
+	</div>
+      </div>
+      <div class="col-md-4" style="text-align: center">
+	<div class="row">Phone Number
+	  <div class="col-md-12">{{phonenum}}</div>
+	</div>
+      </div>
+      <div class="col-md-4" style="text-align: center">
+	<div class="row">Rating
+	  <div class="col-md-12">{{rating}}</div>
+	</div>
+      </div>
+      <div class="container" style="text-align: center">
+	<h3>Location of {{first}} {{last}}</h3>
+	<img src="{{gmaps}}" />
+      </div>
+    </div>
+    
+    <center>
+    <h2>Directions</h2>
+    </center>
+    {{d | safe}}
     
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="../static/bootstrap/js/bootstrap.min.js"></script>
