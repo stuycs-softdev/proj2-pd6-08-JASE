@@ -30,12 +30,15 @@ def pFind(first,last):
     data = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
         phoneNum = x.find('span')
-        x.find('span').replaceWith(' ');
+        tmp = x
+        tmp = tmp.find('br')
+        tmp.find('span').replaceWith(' ')
+        x = x.find('br').replaceWith(' ');
         if(phoneNum):
             phoneNum = phoneNum.get_text()
         else:
             phoneNum = 'UnListed PhoneNumber'
-        address = x.get_text()
+        address = x.get_text() + tmp.get_text()
         data.append({"address":address,
                  "phoneNum":phoneNum})
     if(len(data) == 0):
@@ -48,13 +51,15 @@ def pFindNJ(first,last):
     result = BeautifulSoup(url)
     data = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
-        phoneNum = x.find('span')
-        x.find('span').replaceWith(' ');
+        tmp = x
+        tmp = tmp.find('br')
+        tmp.find('span').replaceWith(' ')
+        x = x.find('br').replaceWith(' ');
         if(phoneNum):
             phoneNum = phoneNum.get_text()
         else:
             phoneNum = 'UnListed PhoneNumber'
-        address = x.get_text()
+        address = x.get_text() + tmp.get_text()
         data.append({"address":address,
                  "phoneNum":phoneNum})
         if(len(data) == 0):
@@ -63,8 +68,6 @@ def pFindNJ(first,last):
         return data
 
 if __name__ == "__main__":
-    print(test())
-    """
     first = raw_input("Enter first name: ")
     last = raw_input("Enter last name: ")
     data = pFind(first,last)
@@ -72,4 +75,3 @@ if __name__ == "__main__":
         print("This guy doesn't exist")
     else:
         print(pFind(first,last))
-        """
