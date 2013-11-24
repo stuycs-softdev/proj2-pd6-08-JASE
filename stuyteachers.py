@@ -95,6 +95,17 @@ def teachersToDatabase():
 
 
 
+    do_ratemyteachers()
+
+    print("Done.")
+    
+
+
+
+
+def do_ratemyteachers():
+    c = MongoClient()
+    c.ratemt.Collections.remove()
     # compare ratemyteachers
     print("Searching up results from ratemyteachers.com:")
     
@@ -143,10 +154,11 @@ def teachersToDatabase():
     print("%d close matches"%(len(close)))
     print("%d no matches"%(len(no)))
 
-    print("Done.")
-    
+
+
 
 def teacher_update(x,k):
+    c = MongoClient()
     c.ratemt.Collections.update({"id":k["id"]},{"$set":{"matched":True}})
     c.teachers.Collections.update(
         {"id":x["id"]},
@@ -174,6 +186,30 @@ def get(a,sort=1):
     return r
 
 
+def get_overpaid(limit):
+    return get_payscale(limit,True)
+def get_underpaid(limit):
+    return get_payscale(limit,False)
+
+def get_payscale(limit,order):
+    c = MongoClient()
+    a = []
+
+    # salary and overall rating must be there
+    for x in c.teachers.Collections.find({"salary":{"$ne":-1},"rmt_overall":{"$ne":-1}}):
+        if x["rmt_overall"] != 0:
+            ratio = x["salary"]/x["rmt_overall"]
+
+            a.append([ratio,x])
+
+    a = sorted(a, key=itemgetter(0), reverse=order)
+
+    r = []
+    for x in a:
+        r.append(x[1])
+    return r
+
+
     
 
 
@@ -191,24 +227,4 @@ if __name__ == "__main__":
 
 #    teachersToDatabase()
 
-    c = MongoClient()
-    for x in c.ratemt.Collections.find():
-        c.ratemt.Collections.update({"id":x["id"]},{"$set":{"matched":False}})
-
-    for x in c.teachers.Collections.find():
-        if "first" in x.keys() and "last" in x.keys():
-            k = c.ratemt.Collections.find_one({"first":x["first"],"last":x["last"],"matched":False})
-
-            if k:
-
-                teacher_update(x,k)
-            
-            else:
-                k = c.ratemt.Collections.find({"last":x["last"],"matched":False})
-                if k.count() == 1:
-
-                    teacher_update(x,k[0])
-
-
-
-
+    do_ratemyteachers()

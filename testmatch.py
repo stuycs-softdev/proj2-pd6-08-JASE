@@ -84,6 +84,10 @@ def printData():
 
 
 if __name__ == "__main__":
-    printData()
+#    printData()
+    c = MongoClient()
+    for x in c.teachers.Collections.find():
+        if x["rmt_overall"] != -1:
+            c.teachers.Collections.update({"id":x['id']},{"$set":{"rmt_overall":int(x["rmt_overall"].replace("%",""))}})
 #    go()
 #    setFirstLast()
