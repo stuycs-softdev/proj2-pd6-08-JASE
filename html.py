@@ -52,7 +52,19 @@ def table_highest(param,table_title,column_title,limit):
 
 
 def table_get(param, sort, limit, offset=0):
-    r = '<table class="table">'
+    sort = int(sort)
+    r = """
+<table class="table" id="sortTable">
+  <tr><th colspan="5" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
+
+  <tr class="col_heads">
+    <th>&nbsp;</th>
+    <th><a href="javascript:void(0)" onclick="sort('last',1)">Name</a></th>
+    <th><a href="javascript:void(0)" onclick="sort('salary',-1)">Salary</a></th>
+    <th><a href="javascript:void(0)" onclick="sort('rmt_overall',-1)">Overall Rating</a></th>
+    <th>Address and Phone Number</th>
+  </tr>
+"""
 
     count = offset
     for x in stuyteachers.get(param, sort, limit, offset):
@@ -67,14 +79,21 @@ def table_get(param, sort, limit, offset=0):
         if x['rmt_overall'] != -1:
             r += '<td style="text-align:center;">%(rmt_overall)d&#37;</td>'%(x)
         else:
-            r += '<td style="font-style:italic;">No Data</td>'
+            r += '<td style="font-style:italic;text-align:center;">No Data</td>'
 
         if len(x['address']) > 0:
-            r += '<td>%s<br />%s</td>'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
-        else:
-            r += '<td>No address found</td>'
+            r += '<td><strong>%s</strong><br />%s'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
+            if len(x['address']) > 1:
+                r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a></td></tr><tr style="display:none" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
+                for y in range(1,len(x['address'])):
+                    r += '<tr><td style="font-weight:bold;">'+x["address"][y]["address"]+'</td><td style="padding-left:15px;">'+x["address"][y]["phoneNum"]+'</td></tr>'
+                r += '</table></td></tr>'
 
-        r += '</tr>'
+            else:
+                r += '</td></tr>'
+        else:
+            r += '<td>No address found</td></tr>'
+
 
     r += '</table>'
 

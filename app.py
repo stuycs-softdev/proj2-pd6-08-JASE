@@ -1,6 +1,7 @@
 
 
 from flask import Flask, render_template, request
+import json
 
 import stuyteachers
 import html
@@ -27,9 +28,24 @@ def stuylist():
 
 #    return render_template("teacher.html",first="Mike",last="zamansky")
 
-@app.route("/json")
-def json():
-    pass
+@app.route("/js")
+def js():
+    
+    param = "last"
+    sort = 1
+    limit = 20
+    offset = 0
+
+    try:
+        param = request.args.get("param")
+        sort = request.args.get("sort")
+    except:
+        pass
+
+    try:
+        return str(html.table_get(param,sort,limit,offset))
+    except:
+        return '{error:true}'
 
 if __name__ == "__main__":
     app.debug = True
