@@ -8,8 +8,10 @@
     <link rel="shortcut icon" href="../static/stalkmyteachers.jpg">
   </head>
   
- <!--Navbar Code -->
-    <body>
+  <!--Navbar Code -->
+  <body>
+  
+    <form method="GET">
     <nav class="navbar navbar-inverse" role="navigation">
       <div class="container">
 	<div class="navbar-header">
@@ -34,10 +36,11 @@
     <!--Teacher Image-->
     <div class="container" style="text-align: center">
       <h1>{{first}} {{last}}</h1>
-    
-    </div>
+      <img src="{{imgurl}}" />
+      </div>
     
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="../static/bootstrap/js/bootstrap.min.js"></script>
-    </body><meta name="viewport" content="width=100, initial-scale=1.0">
+    </form>
+  </body><meta name="viewport" content="width=100, initial-scale=1.0">
 </html>
