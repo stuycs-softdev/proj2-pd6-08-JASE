@@ -18,5 +18,8 @@ teachers:
 	     INT easiness
 	     INT helpfulness
 	     INT clarity
+	     INT knowledgeable
+	     INT textbook_use
+	     INT num_reviews
 	     }	    	       
 
