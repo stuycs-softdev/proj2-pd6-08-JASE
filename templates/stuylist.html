@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <title>StalkMyTeachers</title> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../static/stalkmyteachers.jpg">
+    <link href="../static/bootstrap/css/container.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+  </head>
+  
+
+    <body>
+      <!--Navbar code -->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container">
+	  <div class="navbar-header">
+	    <a class="navbar-brand" href="/">StalkMyTeachers</a>
+	    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+	  </div>
+	  <div class="navbar-collapse collapse">
+	    <ul class="nav navbar-nav">
+	      <li class="active"><a href="/search">Home</a></li>
+	      <li class="active"><a href="/about">About US</a></li>
+	      <li class="active"><a href="/stuylist">Stuyvesant Teachers</a></li>
+	    </ul>
+	  </div>
+	</div>
+      </nav>
+      
+      <!--small search query-->
+      <div class="jumbotron">
+	<form method="POST">
+	  <div class="container" style="text-align:center">
+	    <div action="search.php" class="form-search">
+	      <div class="input-append">
+		  <input name="search" type="text" class="span2 search-query" style="padding: 4px 20px; font-size:18.5px;" placeholder="Search for a Stuyvesant Teacher here" autofocus>
+		  <button type="submit" class="btn btn-primary btn-lg">Search<i class="icon-search icon-white"></i></button>
+	      </div>
+	    </div>
+	  </div>
+      </div>
+	
+      <!--List of teachers in Table format-->
+      
+      {{r | safe}}
+
+
+      </form>
+    </body><meta name="viewport" content="width=100, initial-scale=1.0">
+</html>

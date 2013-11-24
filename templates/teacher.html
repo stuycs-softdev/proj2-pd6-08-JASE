@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <title>StalkMyTeachers</title> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../static/bootstrap/css/teacher.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../static/stalkmyteachers.jpg">
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+  </head>
+  
+  <!--Navbar Code -->
+  <body>
+  
+    <form method="GET">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+	<div class="navbar-header">
+	  <a class="navbar-brand" href="/">StalkMyTeachers</a>
+	  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+	</div>
+	<div class="navbar-collapse collapse">
+	  <ul class="nav navbar-nav">
+	    <li class="active"><a href="/search">Home</a></li>
+	    <li class="active"><a href="/about">About US</a></li>
+	    <li class="active"><a href="/stuylist">Stuyvesant Teachers</a></li>
+	  </ul>
+	</div>
+      </div>
+    </nav>
+    
+    <!--Teacher Image-->
+    <div class="container" style="text-align: center">
+      <h1>{{first}} {{last}}</h1>
+      <img src="{{imgurl}}" />
+      </div>
+    
+    <center>
+    <h3>Information About {{first}} {{last}}</h3>
+    </center>
+    <!--Teacher Info-->
+    <div class="row">
+      <div class="col-md-4" style="text-align: center">Address
+	<div class="row">
+	  <div class="col-md-12">{{address}}</div>
+	</div>
+      </div>
+      <div class="col-md-4" style="text-align: center">
+	<div class="row">Phone Number
+	  <div class="col-md-12">{{phonenum}}</div>
+	</div>
+      </div>
+      <div class="col-md-4" style="text-align: center">
+	<div class="row">Rating
+	  <div class="col-md-12">{{rating}}</div>
+	</div>
+      </div>
+      <div class="container" style="text-align: center">
+	<h3>Location of {{first}} {{last}}</h3>
+	<img src="{{gmaps}}" />
+      </div>
+    </div>
+    
+    <center>
+    <h2>Directions</h2>
+    </center>
+    {{d | safe}}
+    
+
+    </form>
+  </body><meta name="viewport" content="width=100, initial-scale=1.0">
+</html>

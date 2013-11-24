@@ -5,6 +5,7 @@ from flask import Flask, render_template
 import stuyteachers
 import html
 
+
 app = Flask(__name__)
 
 
@@ -23,6 +24,10 @@ def index2():
     r = ""
     s = stuyteachers.get("salary",-1)
 #    s = stuyteachers.get_overpaid(0)
+
+
+
+    s = stuyteachers.get("last")
 
 
 
@@ -53,6 +58,9 @@ def index2():
 
     return r
 
+@app.route("/stuylist")
+def stuylist():
+    return render_template("teacher.html",first="Mike",last="zamansky")
 
 if __name__ == "__main__":
     app.debug = True
