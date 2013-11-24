@@ -3,12 +3,23 @@
 from flask import Flask, render_template
 
 import stuyteachers
+import html
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def index():
+    r = ""
+   
+#    r += html.table_overpaid(5)
+#    r += html.table_underpaid(5)
+#    r += html.table_highest("salary","Salary",10)
+
+    return r
+
+
+def index2():
     r = ""
     s = stuyteachers.get("salary",-1)
 #    s = stuyteachers.get_overpaid(0)

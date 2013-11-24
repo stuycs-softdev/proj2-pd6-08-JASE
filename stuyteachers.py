@@ -173,14 +173,19 @@ def teacher_update(x,k):
 
 
 
-def get(a,sort=1):
+def get(a,sort=1,limit=-1):
     # sort:
 
     c = MongoClient()
 
     r = []
 
-    for x in c.teachers.Collections.find().sort(a,sort):
+
+    k = c.teachers.Collections.find().sort(a,sort)
+    if limit > 0 :
+        k = k.limit(limit)
+    
+    for x in k: 
         r.append(x)
 
     return r
@@ -205,8 +210,8 @@ def get_payscale(limit,order):
     a = sorted(a, key=itemgetter(0), reverse=order)
 
     r = []
-    for x in a:
-        r.append(x[1])
+    for x in range(min(limit,len(a))):
+        r.append(a[x][1])
     return r
 
 
