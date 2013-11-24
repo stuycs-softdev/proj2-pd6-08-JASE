@@ -2,14 +2,14 @@
 
 from flask import Flask, render_template
 
-import stuyteachers
+#import stuyteachers
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def index():
-    r = ""
+    r = """
     s = stuyteachers.get("last")
 
 
@@ -30,9 +30,12 @@ def index():
         r += '</tr>'
 
     r += "</table>"
-
+"""
     return r
 
+@app.route("/stuylist")
+def stuylist():
+    return render_template("teacher.html",first="Mike",last="zamansky")
 
 if __name__ == "__main__":
     app.debug = True
