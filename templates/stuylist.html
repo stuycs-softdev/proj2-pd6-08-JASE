@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../static/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link rel="shortcut icon" href="../static/stalkmyteachers.jpg">
-    <link href="../static/boostrap/css/container.css" rel="stylesheet">
+    <link href="../static/bootstrap/css/container.css" rel="stylesheet">
   </head>
   
 
     <body>
       <!--Navbar code -->
-      <nav class="navbar navbar-inverse" role="navigation">
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 	<div class="container">
 	  <div class="navbar-header">
 	    <a class="navbar-brand" href="/">StalkMyTeachers</a>
@@ -45,7 +45,9 @@
 	  </div>
       </div>
 	
-      <!--List of teachers in Grid format-->
+      <!--List of teachers in Table format-->
+      
+      {{r | safe}}
 
 	<script src="https://code.jquery.com/jquery.js"></script>
 	<script src="../static/bootstrap/js/bootstrap.min.js"></script>
