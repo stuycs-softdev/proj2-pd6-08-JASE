@@ -12,7 +12,11 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    r = '<table>'
+    
+    r = ""
+
+    r += '<div class="alert alert-info"><strong>Overall Rating</strong> information provided by <em>ratemyteachers.com</em></div>'
+    r += '<table style="width:100%">'
     r += '<tr><td>'+html.table_overpaid(5)+'</td><td style="padding-left:20px;">'+html.table_underpaid(5)+'</td></tr>'
     r += '<tr><td>'+html.table_highestpaid(5)+'</td><td>&nbsp;</td></tr>'
     r += '</table>'
