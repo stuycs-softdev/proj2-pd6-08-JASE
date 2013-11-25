@@ -1,6 +1,6 @@
 
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from pymongo import MongoClient
 import json
 
@@ -44,10 +44,23 @@ Clicking the above will search the internet for information about every teacher.
     
     else:
 
+        try:
+            a = request.args.get("type")
+            if a:
+                r += '<div class="alert alert-success"><strong>Success:</strong> '
+
+                if a == "1":
+                    r += 'Data has been successfully loaded from .txt file into MongoDB.  Please enjoy using <strong>StalkMyTeachers</strong>!'
+                elif a == "2":
+                    r += 'Data has been successfully backed up into data.txt'
+                r += '</div>'
+        except:
+            pass
+
         r += '<div class="alert alert-info">Teacher value calculated as the ratio between salary and <strong>ratemyteachers.com</strong> overall rating</div>'
         r += '<table style="width:100%">'
         r += '<tr><td>'+html.table_overpaid(5)+'</td><td style="padding-left:20px;">'+html.table_underpaid(5)+'</td></tr>'
-        r += '<tr><td>'+html.table_highestpaid(5)+'</td><td>&nbsp;</td></tr>'
+        r += '<tr><td>'+html.table_highestpaid(5)+'</td><td style="padding-left:20px;">'+html.table_highest("rmt_overall","Top 5 Highest Rated Teachers","Overall Rating",5)+'</td></tr>'
         r += '</table>'
     return render_template("search.html",table=r)
 
@@ -100,7 +113,7 @@ def preload():
         for x in a:
             c.teachers.Collections.insert(x)
 
-    return "Preload successful<br /><br /><a href='/'>Go Home</a>"
+    return redirect("/?type=1")#"Preload successful<br /><br /><a href='/'>Go Home</a>"
 
 @app.route("/backup")
 def backup():
@@ -110,11 +123,12 @@ def backup():
 
         a = []
         for x in c.teachers.Collections.find():
-             a.append(x)
+            x["_id"] = None
+            a.append(x)
 
         f.write(json.dumps(a))
 
-        return "Backup successful<br /><br /><a href='/'>Go Home</a>"
+        return redirect("/?type=2")#"Backup successful<br /><br /><a href='/'>Go Home</a>"
 
 @app.route("/loadall")
 def loadall():
