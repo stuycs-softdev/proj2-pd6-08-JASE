@@ -175,7 +175,7 @@ def teacher_update(x,k):
 
 
 
-def get(a,sort=1,limit=-1,offset=0):
+def get(a,sort=1,limit=-1,offset=0,teachers=False):
     # sort:
 
     c = MongoClient()
@@ -183,11 +183,20 @@ def get(a,sort=1,limit=-1,offset=0):
 
 
     k = c.teachers.Collections.find({a:{"$ne":-1}}).sort(a,sort).skip(offset)
-    if limit > 0 :
-        k = k.limit(limit)
+    if teachers:
+        count = 0
+        for x in k:
+            if "Teacher" in x['title']:
+                r.append(x)
+                count += 1
+                if count == limit:
+                    break
+    else:
+        if limit > 0 :
+            k = k.limit(limit)
     
-    for x in k: 
-        r.append(x)
+        for x in k: 
+            r.append(x)
 
     return r
 

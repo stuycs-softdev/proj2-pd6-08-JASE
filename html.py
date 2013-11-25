@@ -33,7 +33,8 @@ def table_highest(param,table_title,column_title,limit):
     r = '<table class="table"><tr class="active"><th colspan="4" style="text-align:center;">%s</td></tr><tr class="active"><th>&nbsp;</th><th>Teacher Name</th><th>%s</th></tr>'%(table_title,column_title)
 
     count = 0
-    for x in stuyteachers.get(param,-1,limit):
+    for x in stuyteachers.get(param,-1,limit,0,True):
+
         count += 1
         r += '<tr class="active"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
 
@@ -50,7 +51,8 @@ def table_highest(param,table_title,column_title,limit):
     return r
 
 
-def table_get(param, sort, limit, offset=0):
+def table_get(param, sort, limit, offset=0,teachers=False):
+    # teachers - if True then ONLY TEACHERS appear (no guidance, administration, etc)
     sort = int(sort)
     offset = int(offset)
 
@@ -71,31 +73,32 @@ def table_get(param, sort, limit, offset=0):
 
     count = offset
     for x in stuyteachers.get(param, sort, limit, offset):
-        count += 1
-        r += '<tr class="active"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
+        if not teachers or "Teacher" in x['title']:
+            count += 1
+            r += '<tr class="active"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
 
-        if x['salary'] != -1:
-            r += '<td>$%(salary)d</td>'%(x)
-        else:
-            r += '<td style="font-style:italic;">No Data</td>'
-        
-        if x['rmt_overall'] != -1:
-            r += '<td style="text-align:center;">%(rmt_overall)d&#37;</td>'%(x)
-        else:
-            r += '<td style="font-style:italic;text-align:center;">No Data</td>'
-
-        if len(x['address']) > 0:
-            r += '<td><strong>%s</strong><br />%s'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
-            if len(x['address']) > 1:
-                r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a></td></tr><tr style="display:none" class="active" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
-                for y in range(1,len(x['address'])):
-                    r += '<tr><td style="font-weight:bold;">'+x["address"][y]["address"]+'</td><td style="padding-left:15px;">'+x["address"][y]["phoneNum"]+'</td></tr>'
-                r += '</table></td></tr>'
-
+            if x['salary'] != -1:
+                r += '<td>$%(salary)d</td>'%(x)
             else:
-                r += '</td></tr>'
-        else:
-            r += '<td>No address found</td></tr>'
+                r += '<td style="font-style:italic;">No Data</td>'
+        
+            if x['rmt_overall'] != -1:
+                r += '<td style="text-align:center;">%(rmt_overall)d&#37;</td>'%(x)
+            else:
+                r += '<td style="font-style:italic;text-align:center;">No Data</td>'
+
+            if len(x['address']) > 0:
+                r += '<td><strong>%s</strong><br />%s'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
+                if len(x['address']) > 1:
+                    r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a></td></tr><tr style="display:none" class="active" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
+                    for y in range(1,len(x['address'])):
+                        r += '<tr><td style="font-weight:bold;">'+x["address"][y]["address"]+'</td><td style="padding-left:15px;">'+x["address"][y]["phoneNum"]+'</td></tr>'
+                    r += '</table></td></tr>'
+
+                else:
+                    r += '</td></tr>'
+            else:
+                r += '<td>No address found</td></tr>'
 
 
     if offset == 0:
