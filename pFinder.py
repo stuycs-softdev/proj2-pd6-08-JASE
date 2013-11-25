@@ -42,13 +42,7 @@ def pFind(first,last):
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
         phoneNum = x.find('span')
         tmp = x
-<<<<<<< HEAD
         #tmp=tmp.find('br')
-=======
-        #tmp = tmp.find('br')
-        
-
->>>>>>> master
         tmp.find('span').replaceWith(' ')
         x = x.find('br').replaceWith(' ')
         if(phoneNum):
@@ -78,11 +72,7 @@ def pFindNJ(first,last):
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
         phoneNum = x.find('span')
         tmp = x
-<<<<<<< HEAD
         #tmp = tmp.find('br')
-=======
-#        tmp = tmp.find('br')
->>>>>>> master
         tmp.find('span').replaceWith(' ')
         x = x.find('br').replaceWith(' ')
         if(phoneNum):
