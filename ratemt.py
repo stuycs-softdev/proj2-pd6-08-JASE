@@ -40,13 +40,15 @@ def getPageRatings(page_num):
             easiness = len(rlist[0].find_all("li", {"class" : "yellowStar"}))
             helpful = len(rlist[1].find_all("li", {"class" : "yellowStar"}))
             clarity = len(rlist[3].find_all("li", {"class" : "yellowStar"}))
+
             
-            
+
+            nreviews = int(page2.find("span", {"class" : "reviews"}).get_text()[:-8])
 
 
-            results.append({"name":name, "overall":overall, "subject":subject, "easiness":easiness, "helpfulness":helpful, "clarity":clarity})
+            results.append({"name":name, "overall":overall, "subject":subject, "easiness":easiness, "helpfulness":helpful, "clarity":clarity, "reviews":nreviews})
 
-            print("%s (%s)\t%s, %d, %d, %d"%(name,subject,overall,easiness,helpful,clarity))
+            print("%s (%s)\t%s, %d, %d, %d, %s"%(name,subject,overall,easiness,helpful,clarity, nreviews))
 
     return results
 
