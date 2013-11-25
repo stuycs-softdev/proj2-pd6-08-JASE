@@ -31,7 +31,9 @@ def pFind(first,last):
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
         phoneNum = x.find('span')
         tmp = x
-        tmp = tmp.find('br')
+        #tmp = tmp.find('br')
+        
+
         tmp.find('span').replaceWith(' ')
         x = x.find('br').replaceWith(' ');
         if(phoneNum):
@@ -51,8 +53,9 @@ def pFindNJ(first,last):
     result = BeautifulSoup(url)
     data = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
+        phoneNum = x.find('span')
         tmp = x
-        tmp = tmp.find('br')
+#        tmp = tmp.find('br')
         tmp.find('span').replaceWith(' ')
         x = x.find('br').replaceWith(' ');
         if(phoneNum):

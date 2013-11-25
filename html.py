@@ -29,7 +29,6 @@ def table_underpaid(limit):
 def table_highestpaid(limit):
     return table_highest("salary","Top "+str(limit)+" Highest Paid Teachers","Salary",limit)
 
-
 def table_highest(param,table_title,column_title,limit):
     r = '<table class="table"><tr class="active"><th colspan="4" style="text-align:center;">%s</td></tr><tr class="active"><th>&nbsp;</th><th>Teacher Name</th><th>%s</th></tr>'%(table_title,column_title)
 
