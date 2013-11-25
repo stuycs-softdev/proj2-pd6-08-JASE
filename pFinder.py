@@ -71,7 +71,7 @@ if __name__ == "__main__":
     first = raw_input("Enter first name: ")
     last = raw_input("Enter last name: ")
     data = pFind(first,last)
-    if(list(data) == 0):
-        print("This guy doesn't exist")
-    else:
+    if(data):
         print(pFind(first,last))
+    else:
+        print("This guy doesn't exist")
