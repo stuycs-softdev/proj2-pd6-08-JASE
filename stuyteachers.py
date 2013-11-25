@@ -10,6 +10,7 @@
 
 import urllib
 import json
+import math
 from bs4 import BeautifulSoup
 from operator import itemgetter
 
@@ -29,11 +30,11 @@ def getTeachers(s=None):
     for x in result.find("table").find_all("tr"):
         name = x.find("td").find("a")
         if name:
-            n = name.get_text().split(". ")[1].split(" ")
+            n = name.get_text().split(". ")[1]#.split(" ")
 
             r.append({
-                "first":n[0],
-                "last":n[1],
+                "first":n.split(" ")[0],
+                "last":n.replace(n.split(" ")[0]+" ",""),
                 "title":x.find_all("td")[1].get_text()
                 })
                 
@@ -174,7 +175,7 @@ def teacher_update(x,k):
 
 
 
-def get(a,sort=1,limit=-1,offset=0):
+def get(a,sort=1,limit=-1,offset=0,teachers=False):
     # sort:
 
     c = MongoClient()
@@ -182,28 +183,38 @@ def get(a,sort=1,limit=-1,offset=0):
 
 
     k = c.teachers.Collections.find({a:{"$ne":-1}}).sort(a,sort).skip(offset)
-    if limit > 0 :
-        k = k.limit(limit)
+    if teachers:
+        count = 0
+        for x in k:
+            if "Teacher" in x['title']:
+                r.append(x)
+                count += 1
+                if count == limit:
+                    break
+    else:
+        if limit > 0 :
+            k = k.limit(limit)
     
-    for x in k: 
-        r.append(x)
+        for x in k: 
+            r.append(x)
 
     return r
 
 
 def get_overpaid(limit):
-    return get_payscale(limit,True)
+    return get_payscale(limit,True,2,.65)
 def get_underpaid(limit):
-    return get_payscale(limit,False)
+    return get_payscale(limit,False,.65,2)
 
-def get_payscale(limit,order):
+def get_payscale(limit,order,b1,b2):
     c = MongoClient()
     a = []
 
     # salary and overall rating must be there
     for x in c.teachers.Collections.find({"salary":{"$ne":-1},"rmt_overall":{"$ne":-1}}):
-        if x["rmt_overall"] != 0:
-            ratio = x["salary"]/x["rmt_overall"]
+        if x["rmt_overall"] != 0 and "Teacher" in x["title"]:
+#            ratio = math.sqrt(x["salary"])/(x["rmt_overall"]*x["rmt_overall"])
+            ratio = math.pow(x["salary"],b1)/math.pow(x["rmt_overall"],b2)
 
             a.append([ratio,x])
 
