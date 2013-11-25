@@ -1,4 +1,3 @@
-
 ## ACCESS TEACHER LIST:
 ## getTeachers(SORT)
 ## available options:
@@ -114,7 +113,7 @@ def do_ratemyteachers():
     
     for x in range(0,len(res)):
         res[x]["id"] = x
-        res[x]["overall"] = int(res[x]["overall"].replace("%",""))
+        res[x]["overall"] = res[x]["overall"]
         c.ratemt.Collections.insert(res[x])
 
 
@@ -182,7 +181,7 @@ def get(a,sort=1,limit=-1,offset=0):
     r = []
 
 
-    k = c.teachers.Collections.find().sort(a,sort).skip(offset)
+    k = c.teachers.Collections.find({a:{"$ne":-1}}).sort(a,sort).skip(offset)
     if limit > 0 :
         k = k.limit(limit)
     
