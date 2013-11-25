@@ -6,21 +6,31 @@ from bs4 import BeautifulSoup
 def test():
     url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-Kevin-Li")
     result = BeautifulSoup(url)
+    pridata = []
     data = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
         phoneNum = x.find('span')
         tmp = x
-        tmp = tmp.find('br')
+        #tmp = tmp.find('br')
         tmp.find('span').replaceWith(' ')
-        x = x.find('br').replaceWith(' ');
+        x = x.find('br').replaceWith(' ')
         if(phoneNum):
             phoneNum = phoneNum.get_text()   
         else:
             phoneNum = 'UnListed PhoneNumber'
         address = x.get_text() + tmp.get_text()
-        data.append({"address":address,
-                     "phoneNum":phoneNum})
-    return data
+        city = x
+        city = city.get_text().split(',')[0]
+        if("Brooklyn" in city or "New York" in city):
+            pridata.append({"address":address,
+                         "phoneNum":phoneNum,
+                         "test":city})
+        else:
+            data.append({"address":address,
+                         "phoneNum":phoneNum,
+                         "test":city})
+    data = pridata + data
+    return data 
 
 
 #Finds the info on someone by using first and last name.If not in NY, search NJ
@@ -28,44 +38,60 @@ def pFind(first,last):
     url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-"+ first + "-" +last)
     result = BeautifulSoup(url)
     data = []
+    pridata =[]
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
         phoneNum = x.find('span')
         tmp = x
-        tmp = tmp.find('br')
+        #tmp=tmp.find('br')
         tmp.find('span').replaceWith(' ')
-        x = x.find('br').replaceWith(' ');
+        x = x.find('br').replaceWith(' ')
         if(phoneNum):
             phoneNum = phoneNum.get_text()
         else:
             phoneNum = 'UnListed PhoneNumber'
         address = x.get_text() + tmp.get_text()
-        data.append({"address":address,
-                 "phoneNum":phoneNum})
-    if(len(data) == 0):
-        data = pFindNJ(first,last)
-    return data
+        city = x
+        city = city.get_text().split(',')[0]
+        if("Brooklyn" in city or "New York" in city):
+            pridata.append({"address":address,
+                         "phoneNum":phoneNum,
+                         "test":city})
+        else:
+            data.append({"address":address,
+                         "phoneNum":phoneNum,
+                         "test":city})
+    data = pridata + data
+    return data 
 
 #Finds if person is in NJ, if not returns none found
 def pFindNJ(first,last):
     url = urllib.urlopen("http://www.peoplefinder.com/people-search/NJ-"+ first + "-" +last)
     result = BeautifulSoup(url)
     data = []
+    pridata = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
+        phoneNum = x.find('span')
         tmp = x
-        tmp = tmp.find('br')
+        #tmp = tmp.find('br')
         tmp.find('span').replaceWith(' ')
-        x = x.find('br').replaceWith(' ');
+        x = x.find('br').replaceWith(' ')
         if(phoneNum):
             phoneNum = phoneNum.get_text()
         else:
             phoneNum = 'UnListed PhoneNumber'
         address = x.get_text() + tmp.get_text()
-        data.append({"address":address,
-                 "phoneNum":phoneNum})
-        if(len(data) == 0):
-            data.append({"address":"None found",
-                         "phoneNum":"None found"})
-        return data
+        city = x
+        city = city.get_text().split(',')[0]
+        if("Brooklyn" in city or "New York" in city):
+            pridata.append({"address":address,
+                         "phoneNum":phoneNum,
+                         "test":city})
+        else:
+            data.append({"address":address,
+                         "phoneNum":phoneNum,
+                         "test":city})
+    data = pridata + data
+    return data 
 
 if __name__ == "__main__":
     first = raw_input("Enter first name: ")
@@ -75,3 +101,4 @@ if __name__ == "__main__":
         print(pFind(first,last))
     else:
         print("This guy doesn't exist")
+
