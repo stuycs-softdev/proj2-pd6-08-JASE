@@ -1,6 +1,7 @@
 
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+import json
 
 import stuyteachers
 import html
@@ -11,56 +12,42 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    r = ""
-   
-    r += html.table_overpaid(5)
-    r += html.table_underpaid(5)
-    r += html.table_highest("salary","Salary",10)
+    r = '<table>'
+    r += '<tr><td>'+html.table_overpaid(5)+'</td><td style="padding-left:20px;">'+html.table_underpaid(5)+'</td></tr>'
+    r += '<tr><td>'+html.table_highestpaid(5)+'</td><td>&nbsp;</td></tr>'
+    r += '</table>'
+    return render_template("search.html",table=r)
 
-    return r
-
-
-def index2():
-    r = ""
-    s = stuyteachers.get("salary",-1)
-#    s = stuyteachers.get_overpaid(0)
-
-
-
-    s = stuyteachers.get("last")
-
-
-
-    r = "<table>"
-    count = 0
-    for x in s:
-        count += 1
-        r += '<tr><td>'+str(count)+'</td><td>%(first)s %(last)s</td><td>%(title)s</td>'%(x)
-
-        if x["salary"] == -1:
-            r += '<td><em>No Results</em></td>'
-        else:
-            r += '<td>$%(salary)d</td>'%(x)
-   
-        if len(x["address"]) > 0:
-            r += '<td><strong>%s</strong><br />%s</td>'%(x["address"][0]["address"],x["address"][0]["phoneNum"])
-        else:
-            r += '<td>No address found</td>'
-
-        if x["rmt_overall"] == -1:
-            r += '<td colspan="4">No ratings</td>'
-        else:
-            r += '<td>%(rmt_overall)s&#37;</td><td>%(rmt_easiness)d</td><td>%(rmt_helpfulness)d</td><td>%(rmt_clarity)d</td>'%(x)
-
-        r += '</tr>'
-
-    r += "</table>"
-
-    return r
 
 @app.route("/stuylist")
 def stuylist():
-    return render_template("teacher.html",first="Mike",last="zamansky")
+
+    r = html.table_get("last",1,20,0)
+    
+    return render_template("search.html",table=r)
+
+#    return render_template("teacher.html",first="Mike",last="zamansky")
+
+@app.route("/js")
+def js():
+    
+    param = "last"
+    sort = 1
+    limit = 20
+    offset = 0
+
+    try:
+        param = request.args.get("param")
+        sort = request.args.get("sort")
+        offset = request.args.get("offset")
+    except:
+        pass
+
+
+    try:
+        return str(html.table_get(param,sort,limit,int(offset)))
+    except:
+        return '{error:true}'
 
 if __name__ == "__main__":
     app.debug = True

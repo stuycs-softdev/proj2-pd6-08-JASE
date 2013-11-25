@@ -65,9 +65,10 @@ def teachersToDatabase():
         t["address"] = []
         addr = pFinder.pFind(t["first"],t["last"])
 
-        for z in addr:
+        if addr:
+            for z in addr:
             # z["map"] = gmap()  --- placeholder for Google Maps function
-            t["address"].append(z)
+                t["address"].append(z)
 
         t["rmt_overall"] = -1
         t["rmt_easiness"] = -1
@@ -113,6 +114,7 @@ def do_ratemyteachers():
     
     for x in range(0,len(res)):
         res[x]["id"] = x
+        res[x]["overall"] = int(res[x]["overall"].replace("%",""))
         c.ratemt.Collections.insert(res[x])
 
 
@@ -173,15 +175,14 @@ def teacher_update(x,k):
 
 
 
-def get(a,sort=1,limit=-1):
+def get(a,sort=1,limit=-1,offset=0):
     # sort:
 
     c = MongoClient()
-
     r = []
 
 
-    k = c.teachers.Collections.find().sort(a,sort)
+    k = c.teachers.Collections.find().sort(a,sort).skip(offset)
     if limit > 0 :
         k = k.limit(limit)
     
@@ -230,6 +231,6 @@ if __name__ == "__main__":
 #        res[x]["id"] = x
 #        c.ratemt.Collections.insert(res[x])
 
-#    teachersToDatabase()
+    teachersToDatabase()
 
-    do_ratemyteachers()
+#    do_ratemyteachers()
