@@ -26,10 +26,11 @@ def getPageRatings(page_num):
         if len(x.find_all("td")) > 0:
             a = x.find_all("td")
             name = a[0].find("span").get_text()
-            overall = a[1].find("span").get_text()
+            overall = int(a[1].find("span").get_text()[:-1])
             subject = a[2].get_text()
             page_link = a[0].find("a")['href']
             
+
             page_link = "http://www.ratemyteachers.com" + page_link
 
             page2 = BeautifulSoup(urllib.urlopen(page_link))
@@ -39,12 +40,15 @@ def getPageRatings(page_num):
             easiness = len(rlist[0].find_all("li", {"class" : "yellowStar"}))
             helpful = len(rlist[1].find_all("li", {"class" : "yellowStar"}))
             clarity = len(rlist[3].find_all("li", {"class" : "yellowStar"}))
-               
-               
 
-            results.append({"name":name, "overall":overall, "subject":subject, "easiness":easiness, "helpfulness":helpful, "clarity":clarity})
+            
 
-            print("%s (%s)\t%s, %d, %d, %d"%(name,subject,overall,easiness,helpful,clarity))
+            nreviews = int(page2.find("span", {"class" : "reviews"}).get_text()[:-8])
+
+
+            results.append({"name":name, "overall":overall, "subject":subject, "easiness":easiness, "helpfulness":helpful, "clarity":clarity, "reviews":nreviews})
+
+            print("%s (%s)\t%s, %d, %d, %d, %s"%(name,subject,overall,easiness,helpful,clarity, nreviews))
 
     return results
 
