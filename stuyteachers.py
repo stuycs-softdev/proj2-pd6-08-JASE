@@ -1,4 +1,3 @@
-
 ## ACCESS TEACHER LIST:
 ## getTeachers(SORT)
 ## available options:
@@ -114,7 +113,7 @@ def do_ratemyteachers():
     
     for x in range(0,len(res)):
         res[x]["id"] = x
-        res[x]["overall"] = int(res[x]["overall"].replace("%",""))
+        res[x]["overall"] = res[x]["overall"]
         c.ratemt.Collections.insert(res[x])
 
 

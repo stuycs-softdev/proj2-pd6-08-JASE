@@ -3,7 +3,7 @@
 from pymongo import MongoClient
 import json
 
-
+import salary
 
 def setFirstLast():
     c = MongoClient()
@@ -83,11 +83,19 @@ def printData():
 
 
 
-if __name__ == "__main__":
-#    printData()
+def updateSalary():
     c = MongoClient()
+
     for x in c.teachers.Collections.find():
-        if x["rmt_overall"] != -1:
-            c.teachers.Collections.update({"id":x['id']},{"$set":{"rmt_overall":int(x["rmt_overall"].replace("%",""))}})
+        sal = salary.getSalary(x['first'],x['last'])
+        c.teachers.Collections.update({"id":x['id']},{"$set":{"salary":sal[0],"salary_year":sal[1]}})
+        print("%s %s - $%d"%(x['first'],x['last'],sal[0]))
+
+
+
+
+if __name__ == "__main__":
+    updateSalary()
+#    printData()
 #    go()
 #    setFirstLast()

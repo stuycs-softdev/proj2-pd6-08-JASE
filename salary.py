@@ -14,12 +14,20 @@ def getSalary(first,last):
     sal = json.loads(result.read())
     
 
+    salary = []
     for x in sal["data"]:
-        if "Department OF Education" in x:
-            salary = x[2]
-            year = x[5]
+        if "Department OF Education" in x or "Department of Education" in x:
+            salary.append([int(x[2]),x[5]])
 
-            return [salary,year]
+    
+
+    if len(salary) > 0:     
+        for x in salary:
+            # check for normal teacher parameters
+            if x[0] > 45000 and x[0] < 110000:
+                return [x[0],x[1]]
+
+        return [salary[0][0],salary[0][1]]
 
     return [-1,-1]
 
