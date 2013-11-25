@@ -53,11 +53,15 @@ def table_highest(param,table_title,column_title,limit):
 
 def table_get(param, sort, limit, offset=0):
     sort = int(sort)
-    r = """
-<table class="table" id="sortTable">
-  <tr><th colspan="5" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
+    offset = int(offset)
 
-  <tr class="col_heads">
+    r = ""
+    if offset == 0:
+        r += """
+<table class="table" id="sortTable">
+  <tr class="active"><th colspan="5" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
+
+  <tr class="col_heads active">
     <th>&nbsp;</th>
     <th><a href="javascript:void(0)" onclick="sort('last',1)">Name</a></th>
     <th><a href="javascript:void(0)" onclick="sort('salary',-1)">Salary</a></th>
@@ -69,7 +73,7 @@ def table_get(param, sort, limit, offset=0):
     count = offset
     for x in stuyteachers.get(param, sort, limit, offset):
         count += 1
-        r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
+        r += '<tr class="active"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
 
         if x['salary'] != -1:
             r += '<td>$%(salary)d</td>'%(x)
@@ -84,7 +88,7 @@ def table_get(param, sort, limit, offset=0):
         if len(x['address']) > 0:
             r += '<td><strong>%s</strong><br />%s'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
             if len(x['address']) > 1:
-                r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a></td></tr><tr style="display:none" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
+                r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a></td></tr><tr style="display:none" class="active" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
                 for y in range(1,len(x['address'])):
                     r += '<tr><td style="font-weight:bold;">'+x["address"][y]["address"]+'</td><td style="padding-left:15px;">'+x["address"][y]["phoneNum"]+'</td></tr>'
                 r += '</table></td></tr>'
@@ -95,6 +99,10 @@ def table_get(param, sort, limit, offset=0):
             r += '<td>No address found</td></tr>'
 
 
-    r += '</table>'
+    if offset == 0:
+        r += '<tr id="loadMore" class="active"><td colspan="5" style="text-align:center;"><a href="javascript:void(0)" onclick="loadMore()">Load More Results</a><br /><br /><a href="#">Back to Top</a></td></tr>'
+
+
+        r += '</table>'
 
     return r

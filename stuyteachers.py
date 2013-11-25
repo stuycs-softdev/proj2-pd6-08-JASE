@@ -182,7 +182,7 @@ def get(a,sort=1,limit=-1,offset=0):
     r = []
 
 
-    k = c.teachers.Collections.find().sort(a,sort)
+    k = c.teachers.Collections.find().sort(a,sort).skip(offset)
     if limit > 0 :
         k = k.limit(limit)
     

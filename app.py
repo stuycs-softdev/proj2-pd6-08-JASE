@@ -22,7 +22,7 @@ def index():
 @app.route("/stuylist")
 def stuylist():
 
-    r = html.table_get("salary",-1,20,0)
+    r = html.table_get("last",1,20,0)
     
     return render_template("search.html",table=r)
 
@@ -39,11 +39,13 @@ def js():
     try:
         param = request.args.get("param")
         sort = request.args.get("sort")
+        offset = request.args.get("offset")
     except:
         pass
 
+
     try:
-        return str(html.table_get(param,sort,limit,offset))
+        return str(html.table_get(param,sort,limit,int(offset)))
     except:
         return '{error:true}'
 
