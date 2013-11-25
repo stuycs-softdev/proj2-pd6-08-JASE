@@ -51,10 +51,57 @@ def table_highest(param,table_title,column_title,limit):
     return r
 
 
+
+def searchCode(a):
+    if len(a.keys()) == 0:
+        a = {}
+    if "name" not in a:
+        a["name"] = ""
+    if "title" not in a:
+        a["title"] = ""
+
+
+    r = """
+<form method="get" id="searchForm" action="stuylist">
+  <h3 class="form-search-heading">Search for a Teacher in Stuyvesant</h3>
+  <input name="name" type="text" class="input-lg search-query" placeholder="Enter name" value="%(name)s" autofocus>
+  <input type="submit" class="btn btn-lg btn-primary" value="Search" />
+  <br /><a href="javascript:void(0)" onclick="$('#adv').slideToggle()">Show Advanced Search Options</a>
+  <div id="adv" style="display:none">
+   <table>
+    <tr><td>
+
+<strong>Filter by title/department:</strong><br />
+<input name="title" type="text" class="search-query" placeholder="Ex: Physics" value="%(title)s" />
+
+    </td></tr>
+   </table>
+  </div>
+</form>
+"""%(a)
+    return r
+
+
+
+
 def table_get(param, sort, limit, offset=0,teachers=False):
-    # teachers - if True then ONLY TEACHERS appear (no guidance, administration, etc)
     sort = int(sort)
     offset = int(offset)
+    return table_get2(stuyteachers.get(param, sort, limit, offset),offset)
+
+def table_search(ar,limit,offset=0):
+    sort = 1
+    offset = int(offset)
+    
+    return table_get2(stuyteachers.search(ar,limit,offset),offset)
+
+
+
+#def table_get(param, sort, limit, offset=0,teachers=False):
+def table_get2(loop, offset):
+    # teachers - if True then ONLY TEACHERS appear (no guidance, administration, etc)
+#    sort = int(sort)
+#    offset = int(offset)
 
     r = ""
     if offset == 0:
@@ -72,8 +119,9 @@ def table_get(param, sort, limit, offset=0,teachers=False):
 """
 
     count = offset
-    for x in stuyteachers.get(param, sort, limit, offset):
-        if not teachers or "Teacher" in x['title']:
+    for x in loop:
+#        if not teachers or "Teacher" in x['title']:
+        if True:
             count += 1
             r += '<tr class="active"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
 

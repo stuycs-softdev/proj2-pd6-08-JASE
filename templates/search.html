@@ -13,6 +13,7 @@
   
  <!--Navbar Code -->
     <body>
+      <div id="opac">
     <nav class="navbar navbar-inverse" role="navigation">
       <div class="container">
 	<div class="navbar-header">
@@ -36,12 +37,8 @@
     
     <!--Search code -->
     <div class="container" style="text-align:center">
-      <form method="POST">
-	<form class="form-search">
-	  <h3 class="form-search-heading">Search for a Teacher in Stuyvesant</h3>
-	  <input name="search" type="text" class="input-lg search-query" placeholder="Enter name" required autofocus>
-	  <button type="submit" href="/" class="btn btn-lg btn-primary">Search</button>
-      </form>
+
+      {{ search | safe }}
 	<a href="/stuylist">View all the Stuyvesant teachers here!</a>
 	<br>
 	{{table | safe}}
@@ -49,8 +46,8 @@
     
       
 
-    </form>
 
 
+    </div>
   </body><meta name="viewport" content="width=100, initial-scale=1.0">
 </html>

@@ -201,6 +201,50 @@ def get(a,sort=1,limit=-1,offset=0,teachers=False):
     return r
 
 
+
+def search(ar,limit,offset=0):
+    c = MongoClient()
+    r = []
+
+
+    
+    temp = ""
+
+
+    m = []
+
+    if "name" in ar and ar.get("name") != "":
+        temp = ar.get("name").replace(" ","|").replace("-","|")
+        
+        m.append({"$or":[
+                    {"first":{"$regex":temp,"$options":"-i"}},
+                    {"last":{"$regex":temp,"$options":"-i"}}
+                    ]
+                  })
+
+    if "title" in ar and ar.get("title") != "":
+        m.append({"title":{"$regex":ar.get("title"),"$options":"-i"}})
+
+#        k = c.teachers.Collections.find({
+#                "$or":[
+#                        {"first":{"$regex":temp,"$options":"-i"}},
+#                        {"last":{"$regex":temp,"$options":"-i"}}
+#                        ]
+#                })
+
+    
+    if len(m) == 0:
+        k = c.teachers.Collections.find()
+    else:
+        k = c.teachers.Collections.find({"$and":m})
+
+    for x in k.sort("last",1):
+        r.append(x)
+
+    return r
+    
+
+
 def get_overpaid(limit):
     return get_payscale(limit,True,2,.65)
 def get_underpaid(limit):
@@ -224,6 +268,14 @@ def get_payscale(limit,order,b1,b2):
     for x in range(min(limit,len(a))):
         r.append(a[x][1])
     return r
+
+
+
+
+def get_departments():
+    c = MongoClient()
+    k = c.teachers.Collections.find({"title":{"$regex":"Teacher"}}).distinct("title")
+
 
 
     
