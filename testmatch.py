@@ -1,9 +1,22 @@
 
 
+######
+## ANDREW ZARENBERG
+
+## THIS IS MY TEST FILE
+
+## NOBODY EDIT THIS
+
+## THIS IS JUST FOR ME TO TEST FUNCTIONS
+## THIS FILE DOES NOTHING
+
+######
+
 from pymongo import MongoClient
 import json
 
 import salary
+import stuyteachers
 
 def setFirstLast():
     c = MongoClient()
@@ -92,10 +105,26 @@ def updateSalary():
         print("%s %s - $%d"%(x['first'],x['last'],sal[0]))
 
 
+def fixSalary():
+    c = MongoClient()
+
+    for x in c.teachers.Collections.find():
+        if x['salary'] != -1 and x['salary'] < 40000:
+            c.teachers.Collections.update({"id":x['id']},{"$set":{"salary":-1,"salary_year":-1}})
+
+
+
+def showTeachers():
+    for x in stuyteachers.getTeachers():
+        print(x["last"])
+
+
 
 
 if __name__ == "__main__":
+#    showTeachers()
     updateSalary()
+#    fixSalary()
 #    printData()
 #    go()
 #    setFirstLast()
