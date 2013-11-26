@@ -64,16 +64,13 @@ function mapZoomIn(){
 }
 
 
-/*
 $(function(){
-    $("#searchForm").submit(function(e){
-	e.preventDefault ? e.preventDefault() : e.returnValue = false;
-
-	loading("Searching for <strong>"+$("#searchForm").children("input").val()+"</strong>...");
-	
-	$.get("/js?type=2&name="+$("#searchForm").val(),function(d){
-	    $("#sortTable").before(d).remove();
-	    stopLoading();
+    if(location.href.match("/teacher-")){
+	$("tr.mapListing").click(function(){
+	    $(this).parent().children("tr.success").attr("class","warning");
+	    $(this).attr("class","success");
+	    a = $(this).children("td:eq(0)").children("strong").text().replace(" ","+")
+	    $("#mapImg").attr("src","http://maps.googleapis.com/maps/api/staticmap?center="+a+"&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C"+a+"&sensor=false")
 	});
-    });
-});*/
+    }
+});

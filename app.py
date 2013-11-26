@@ -120,7 +120,8 @@ def teacher(n):
 
 <div class="col-md-8">
 <table class="table">
-<tr class="warning"><th colspan="2" style="font-weight:bold;text-align:center;">Address &amp; Phone Number Information</th></tr>"""
+<tr class="warning"><th colspan="2" style="font-weight:bold;text-align:center;">Address &amp; Phone Number Information<br />
+<small><em>Click on a listing to display a Google Maps of the address</em></small></th></tr>"""
 
         if len(d["address"]) == 0:
             r += '<tr class="warning"><td colspan="2" style="text-align:center;">No Information Found</td></tr>'
@@ -136,8 +137,11 @@ def teacher(n):
 </div>
 </td></tr>"""%(d["address"][0]["address"],gmap.gmap(d["address"][0]["address"]))
 
+            aw = "success"
             for x in d["address"]:
-                r += '<tr class="warning"><td colspan="2"><strong>%s</strong><br />%s</td></tr>'%(x["address"],x["phoneNum"])
+                r += '<tr class="%s mapListing"><td colspan="2"><strong>%s</strong><br />%s</td></tr>'%(aw,x["address"],x["phoneNum"])
+                aw = "warning"
+
 
         r += """
 
@@ -146,7 +150,7 @@ def teacher(n):
 """%(d)
 
 
-    return render_template("search.html",table=r)
+    return render_template("search.html",table=r,search=html.searchCode({}))
 
 
 @app.route("/js")
