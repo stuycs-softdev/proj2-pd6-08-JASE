@@ -62,15 +62,19 @@ Clicking the above will search the internet for information about every teacher.
         r += '<tr><td>'+html.table_overpaid(5)+'</td><td style="padding-left:20px;">'+html.table_underpaid(5)+'</td></tr>'
         r += '<tr><td>'+html.table_highestpaid(5)+'</td><td style="padding-left:20px;">'+html.table_highest("rmt_overall","Top 5 Highest Rated Teachers","Overall Rating",5)+'</td></tr>'
         r += '</table>'
-    return render_template("search.html",table=r)
+    return render_template("search.html",table=r,search=html.searchCode(request.args))
 
 
 @app.route("/stuylist")
 def stuylist():
 
-    r = html.table_get("last",1,20,0)
+    if len(request.args) == 0:
+        r = html.table_get("last",1,20,0)
+    else:
+        r = html.table_search(request.args,20,0)
+        
     
-    return render_template("search.html",table=r)
+    return render_template("search.html",table=r,search=html.searchCode(request.args))
 
 #    return render_template("teacher.html",first="Mike",last="zamansky")
 
