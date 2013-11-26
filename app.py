@@ -139,7 +139,7 @@ def teacher(n):
 
             aw = "success"
             for x in d["address"]:
-                r += '<tr class="%s mapListing"><td colspan="2"><strong>%s</strong><br />%s</td></tr>'%(aw,x["address"],x["phoneNum"])
+                r += '<tr class="%s mapListing"><td colspan="2"><a href="javascript:void(0)" style="font-weight:bold;">%s</a><br />%s</td></tr>'%(aw,x["address"],x["phoneNum"])
                 aw = "warning"
 
 
