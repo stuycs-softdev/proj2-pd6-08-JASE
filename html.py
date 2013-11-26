@@ -75,6 +75,7 @@ def searchCode(a):
 <input name="title" type="text" class="search-query" placeholder="Ex: Physics" value="%(title)s" />
 
     </td></tr>
+
    </table>
   </div>
 </form>

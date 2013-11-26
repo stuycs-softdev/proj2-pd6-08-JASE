@@ -6,7 +6,7 @@ import json
 
 import stuyteachers
 import html
-
+import gmap
 
 app = Flask(__name__)
 c = MongoClient()
@@ -77,6 +77,77 @@ def stuylist():
     return render_template("search.html",table=r,search=html.searchCode(request.args))
 
 #    return render_template("teacher.html",first="Mike",last="zamansky")
+
+
+
+
+# TEACHER PAGE
+@app.route("/teacher-<n>")
+def teacher(n):
+    r = ""
+
+    d = stuyteachers.get_teacher(int(n))
+
+    if d != None:
+        r += """
+<h1>%(first)s %(last)s</h1>
+
+<div class="col-md-4">
+<table class="table" style="border:1px solid rgb(221, 221, 221);">
+<tr class="active"><th colspan="2" style="text-align:center;">Basic Information</td></tr>
+<tr class="active"><td>First Name</td><td>%(first)s</td></tr>
+<tr class="active"><td>Last Name</td><td>%(last)s</td></tr>
+<tr class="active"><td>Title</td><td>%(title)s</td></tr>
+<tr class="active"><td>Yearly Salary</td><td>$%(salary)s<br /><small>[As of year %(salary_year)s]</small></td></tr>"""%(d)
+
+        if d["rmt_overall"] == -1:
+            r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold;">Ratemyteachers.com information unavailable</td></tr>'
+        else:
+            r += """
+<tr class="active"><td>Ratemyteachers.com</td><td>
+<table>
+  <tr><td style="font-weight:bold;">Overall</td><td style="font-weight:bold;">%(rmt_overall)d&#37;</td></tr>
+  <tr><td>Easiness</td><td> &nbsp; %(rmt_easiness)d</td></tr>
+  <tr><td>Helpfulness</td><td> &nbsp; %(rmt_helpfulness)d</td></tr>
+  <tr><td>Clarity</td><td> &nbsp; %(rmt_clarity)d</td></tr>
+</table>
+</td></tr>
+"""%(d)
+
+        r += """
+</table>
+</div>
+
+<div class="col-md-8">
+<table class="table">
+<tr class="warning"><th colspan="2" style="font-weight:bold;text-align:center;">Address &amp; Phone Number Information</th></tr>"""
+
+        if len(d["address"]) == 0:
+            r += '<tr class="warning"><td colspan="2" style="text-align:center;">No Information Found</td></tr>'
+        else:
+            r += """
+<tr class="warning"><td colspan="2">
+<strong>Current Map:</strong><div id="curMap">%s</div><br />
+<div style="text-align:center;">
+<div class="btn-group">
+<button type="button" onclick="mapZoomOut()" class="btn btn-default">-</button>
+<button type="button" onclick="mapZoomIn()" class="btn btn-default">+</button><br />
+<img src="%s" id="mapImg" />
+</div>
+</td></tr>"""%(d["address"][0]["address"],gmap.gmap(d["address"][0]["address"]))
+
+            for x in d["address"]:
+                r += '<tr class="warning"><td colspan="2"><strong>%s</strong><br />%s</td></tr>'%(x["address"],x["phoneNum"])
+
+        r += """
+
+</table>
+</div>
+"""%(d)
+
+
+    return render_template("search.html",table=r)
+
 
 @app.route("/js")
 def js():

@@ -277,6 +277,9 @@ def get_departments():
     k = c.teachers.Collections.find({"title":{"$regex":"Teacher"}}).distinct("title")
 
 
+def get_teacher(n):
+    c = MongoClient()
+    return c.teachers.Collections.find_one({"id":n})
 
     
 

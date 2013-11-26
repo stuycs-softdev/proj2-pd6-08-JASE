@@ -50,6 +50,20 @@ function loadMore(){
 }
 
 
+function mapZoomOut(){
+    var a = $("#mapImg").attr("src")
+    var zoom = a.split("zoom=")[1].split("&")[0]*1-1
+    if(zoom > 0)
+	$("#mapImg").attr("src",a.replace(/zoom=(\d+)/i,"zoom="+zoom))
+}
+function mapZoomIn(){
+    var a = $("#mapImg").attr("src")
+    var zoom = a.split("zoom=")[1].split("&")[0]*1+1
+    if(zoom < 20)
+	$("#mapImg").attr("src",a.replace(/zoom=(\d+)/i,"zoom="+zoom))
+}
+
+
 /*
 $(function(){
     $("#searchForm").submit(function(e){
