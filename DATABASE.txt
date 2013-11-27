@@ -10,11 +10,9 @@ teachers:
 	     STRING map     - Google Maps url
 	     STRING phone   - phone number
 	     }	     
-	image[]{
-	     STRING image   - Google Image url
-	     INT imgWidth   - Google Image resized width
-	     INT imgHeight  - Google Image resized height
-	     }
+	INT imgWidth        - Google Image resized width
+	INT imgHeight       - Google Image resized height
+	STRING image	    - Google image url
         INT rmt_overall     - ratemyteachers.com
         INT rmt_easiness    - ratemyteachers.com
 	INT rmt_helpfulness - ratemyteachers.com
