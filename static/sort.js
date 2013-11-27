@@ -1,10 +1,11 @@
 
 
 curSort = "last";
+curDepSort = 0;
 curOrder = 1;
 limit = 20;
 offset = 0;
-
+tab = [];
 
 
 function loading(text){
@@ -33,12 +34,30 @@ function sort(a,b){
 	curOrder = b;
     }
     updateSort(curSort,curOrder);
-}			   
+}
+			   
+
+function sortDep(a,b){
+    curOrder = curDepSort == a ? -curOrder : b;
+    curDepSort = a;
+    tab.sort(function(c,d){
+	return curOrder == 1 ? c[a]>d[a] : d[a]>c[a];
+    });
+
+    a = 0;
+    $("#depTable tr:gt(1)").each(function(){
+	$(this).children("td:first").html('<a href="stuylist?title='+tab[a][0].replace(" ","+")+'">'+tab[a][0]+'</a>');
+	for(x=1;x<$(this).children("td").length;x++){
+	    $(this).children("td:eq("+x+")").children("span").text(tab[a][x]);
+	}
+	a++;
+    });
+}
     
 
 
 function viewmore(a){
-    $(a).parent().parent().next().toggle();
+    $(a).parent().parent().next().next().toggle();
 }
 
 
@@ -69,7 +88,7 @@ $(function(){
 	$("tr.mapListing").click(function(){
 	    $(this).parent().children("tr.success").attr("class","warning");
 	    $(this).attr("class","success");
-	    a = $(this).children("td:eq(0)").children("strong").text().replace(" ","+")
+	    a = $(this).children("td:eq(0)").children("a").text().replace(" ","+")
 	    $("#mapImg").attr("src","http://maps.googleapis.com/maps/api/staticmap?center="+a+"&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C"+a+"&sensor=false")
 	});
     }
