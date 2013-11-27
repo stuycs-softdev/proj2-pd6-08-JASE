@@ -120,10 +120,21 @@ def showTeachers():
 
 
 
+def ratings():
+    c = MongoClient()
+
+    for x in c.ratemt.Collections.find({"matched":False}):
+        for y in c.teachers.Collections.find({"rmt_overall":-1,"last":{"$regex":x['last']+" "}}):
+            print(y['first']+" "+y['last']+" = "+x['first']+" "+x['last'])
+
+
+
+
 
 if __name__ == "__main__":
+    ratings()
 #    showTeachers()
-    updateSalary()
+#    updateSalary()
 #    fixSalary()
 #    printData()
 #    go()

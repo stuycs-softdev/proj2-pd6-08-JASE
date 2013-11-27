@@ -58,8 +58,7 @@ def pFind(first,last):
                          "test":city})
         else:
             data.append({"address":address,
-                         "phoneNum":phoneNum,
-                         "test":city})
+                         "phoneNum":phoneNum})
     data = pridata + data
     return data 
 
@@ -68,7 +67,6 @@ def pFindNJ(first,last):
     url = urllib.urlopen("http://www.peoplefinder.com/people-search/NJ-"+ first + "-" +last)
     result = BeautifulSoup(url)
     data = []
-    pridata = []
     for x in result.find_all('div', attrs={'class' : 'ticklerResultsDatum ticklerResultsColAddr datumAddr'}):
         phoneNum = x.find('span')
         tmp = x
@@ -80,17 +78,8 @@ def pFindNJ(first,last):
         else:
             phoneNum = 'UnListed PhoneNumber'
         address = x.get_text() + tmp.get_text()
-        city = x
-        city = city.get_text().split(',')[0]
-        if("Brooklyn" in city or "New York" in city):
-            pridata.append({"address":address,
-                         "phoneNum":phoneNum,
-                         "test":city})
-        else:
-            data.append({"address":address,
-                         "phoneNum":phoneNum,
-                         "test":city})
-    data = pridata + data
+        data.append({"address":address,
+                      "phoneNum":phoneNum})
     return data 
 
 if __name__ == "__main__":

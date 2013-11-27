@@ -1,13 +1,18 @@
 
 import stuyteachers
 
+
+def num(a):
+    return '{:,d}'.format(a)
+
 def table_overpaid(limit):
     r = '<table class="table"><tr class="danger"><th colspan="4" style="text-align:center;">Top '+str(limit)+' Overpaid Teachers</td></tr><tr class="danger"><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
 
     count = 0
     for x in stuyteachers.get_overpaid(limit):
+        x['salary'] = num(x['salary'])
         count += 1
-        r += '<tr class="danger"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td><td>$%(salary)d</td><td style="text-align:center">%(rmt_overall)d&#37;</td></tr>'%(x)
+        r += '<tr class="danger"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td><td>$%(salary)s</td><td style="text-align:center">%(rmt_overall)d&#37;</td></tr>'%(x)
 
     r += '</table>'
 
@@ -18,8 +23,9 @@ def table_underpaid(limit):
 
     count = 0
     for x in stuyteachers.get_underpaid(limit):
+        x['salary'] = num(x['salary'])
         count += 1
-        r += '<tr class="success"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td><td>$%(salary)d</td><td style="text-align:center">%(rmt_overall)d&#37;</td></tr>'%(x)
+        r += '<tr class="success"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td><td>$%(salary)s</td><td style="text-align:center">%(rmt_overall)d&#37;</td></tr>'%(x)
 
     r += '</table>'
 
@@ -34,7 +40,7 @@ def table_highest(param,table_title,column_title,limit):
 
     count = 0
     for x in stuyteachers.get(param,-1,limit,0,True):
-
+        x['salary'] = num(x['salary'])
         count += 1
         r += '<tr class="active"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
 
@@ -51,15 +57,64 @@ def table_highest(param,table_title,column_title,limit):
     return r
 
 
+
+def searchCode(a):
+    a = {}
+    if "name" not in a:
+        a["name"] = ""
+    if "title" not in a:
+        a["title"] = ""
+
+
+    r = """
+<form method="get" id="searchForm" action="stuylist">
+  <h3 class="form-search-heading">Search for a Teacher in Stuyvesant</h3>
+  <input name="name" type="text" class="input-lg search-query" placeholder="Enter name" value="%(name)s" autofocus>
+  <input type="submit" class="btn btn-lg btn-primary" value="Search" />
+<!--
+  <br /><a href="javascript:void(0)" onclick="$('#adv').slideToggle()">Show Advanced Search Options</a>
+  <div id="adv" style="display:none">
+   <table>
+    <tr><td>
+
+<strong>Filter by title/department:</strong><br />
+<input name="title" type="text" class="search-query" placeholder="Ex: Physics" value="%(title)s" />
+
+    </td></tr>
+
+   </table>
+  </div>
+-->
+</form>
+"""%(a)
+    return r
+
+
+
+
 def table_get(param, sort, limit, offset=0,teachers=False):
-    # teachers - if True then ONLY TEACHERS appear (no guidance, administration, etc)
     sort = int(sort)
     offset = int(offset)
+    return table_get2(stuyteachers.get(param, sort, limit, offset),offset)
+
+def table_search(ar,limit,offset=0):
+    sort = 1
+    offset = int(offset)
+    
+    return table_get2(stuyteachers.search(ar,limit,offset),offset)
+
+
+
+#def table_get(param, sort, limit, offset=0,teachers=False):
+def table_get2(loop, offset):
+    # teachers - if True then ONLY TEACHERS appear (no guidance, administration, etc)
+#    sort = int(sort)
+#    offset = int(offset)
 
     r = ""
     if offset == 0:
         r += """
-<table class="table" id="sortTable">
+<table class="table table-bordered table-striped" id="sortTable">
   <tr class="active"><th colspan="5" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
 
   <tr class="col_heads active">
@@ -72,13 +127,14 @@ def table_get(param, sort, limit, offset=0,teachers=False):
 """
 
     count = offset
-    for x in stuyteachers.get(param, sort, limit, offset):
-        if not teachers or "Teacher" in x['title']:
+    for x in loop:
+#        if not teachers or "Teacher" in x['title']:
+        if True:
             count += 1
-            r += '<tr class="active"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
+            r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
 
             if x['salary'] != -1:
-                r += '<td>$%(salary)d</td>'%(x)
+                r += '<td>$%s</td>'%(num(x['salary']))
             else:
                 r += '<td style="font-style:italic;">No Data</td>'
         
@@ -90,7 +146,7 @@ def table_get(param, sort, limit, offset=0,teachers=False):
             if len(x['address']) > 0:
                 r += '<td><strong>%s</strong><br />%s'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
                 if len(x['address']) > 1:
-                    r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a></td></tr><tr style="display:none" class="active" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
+                    r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a></td></tr><tr /><tr style="display:none" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
                     for y in range(1,len(x['address'])):
                         r += '<tr><td style="font-weight:bold;">'+x["address"][y]["address"]+'</td><td style="padding-left:15px;">'+x["address"][y]["phoneNum"]+'</td></tr>'
                     r += '</table></td></tr>'
