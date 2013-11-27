@@ -15,7 +15,7 @@ fname = "data.txt"
 
 
 def num(a):
-    return '{:,f}'.format(a)
+    return '{:,.0f}'.format(a)
 
 
 

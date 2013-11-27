@@ -3,7 +3,7 @@ import stuyteachers
 
 
 def num(a):
-    return '{:,f}'.format(a)
+    return '{:,.0f}'.format(a)
 
 def table_overpaid(limit):
     r = '<table class="table"><tr class="danger"><th colspan="4" style="text-align:center;">Top '+str(limit)+' Overpaid Teachers</td></tr><tr class="danger"><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
