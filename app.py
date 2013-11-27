@@ -149,7 +149,14 @@ def teacher(n):
 <div style="text-align:center;">
 <div class="btn-group">
 <button type="button" onclick="mapZoomOut()" class="btn btn-default">-</button>
-<button type="button" onclick="mapZoomIn()" class="btn btn-default">+</button><br />
+<button type="button" onclick="mapZoomIn()" class="btn btn-default">+</button>
+</div>
+<div class="btn-group">
+<button type="button" onclick="mapMapView()" class="btn btn-default">Road Map</button>
+<button type="button" onclick="mapStreetView()" class="btn btn-default">Street View</button>
+</div>
+
+<br /><br />
 <img src="%s" id="mapImg" />
 </div>
 </td></tr>"""%(d["address"][0]["address"],gmap.gmap(d["address"][0]["address"]))
@@ -239,6 +246,26 @@ def js():
         return str(html.table_get(param,sort,limit,int(offset)))
     except:
         return '{error:true}'
+
+
+@app.route("/all")
+def all():
+    k = "http://maps.google.com/maps/api/staticmap?zoom=13&size=1000x800&maptype=roadmap%20"
+
+    temp = []
+    for x in c.teachers.Collections.find():
+        if len(x['address']) > 0:
+            if "New York" in x['address'][0]['address']:
+                temp.append(x['address'][0]['address'])
+
+    for x in range(0,15):
+        k += "&markers=label:%d|%s"%(x+1,temp[x])
+
+    k += "&sensor=false"
+
+    return '<img src="%s" />'%(k)
+
+        
 
 
 @app.route("/preload")
