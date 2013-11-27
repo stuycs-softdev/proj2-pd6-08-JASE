@@ -1,25 +1,21 @@
 import urllib2
 import simplejson
 
+def gImages(first,last):
+    url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + first + "%20" + last + "&key=AIzaSyAEH1zvTqgnRGLX8WIerdMnjZiB2Scyys0"
 
-def gImages(teacher):
-    data = []
-    url = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + teacher
-    print url
-    request = urllib2.Request(url)
-    response = urllib2.urlopen(request)
-    results = simplejson.load(response)
+    results = simplejson.load(urllib2.urlopen(urllib2.Request(url)))
     data = results['responseData']
     dataInfo = data['results']
-    width = dataInfo['tbWidth']
-    height =  dataInfo['tbHeight']
-    url = dataInfo['unescapedUrl']
-    data.append({"imgWidth":width,
-                 "imgHeight":height,
-                 "image":url})
-    return data
-    
+    #imgWidth = dataInfo['tbWidth']
+    #imgHeight = dataInfo['tbHeight']
+    #img = dataInfo['unescapedUrl']
+    #return (imgWidth,imgHeight,img)
+    # Iterate for each result and get unescaped url
+    for myUrl in dataInfo:
+        return (myUrl['tbWidth'],myUrl['tbHeight'],myUrl['unescapedUrl'])
 
 if __name__ == "__main__":
-    name = raw_input("Name: ")
-    print(gImages(name))
+    first = raw_input("First Name: ")
+    last = raw_input("Last Name: ")
+    print(gImages(first,last))
