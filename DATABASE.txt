@@ -1,4 +1,3 @@
-
 teachers:
 	keys:               | description
 	INT id              - unique id number
@@ -13,7 +12,7 @@ teachers:
 	     }	     
 	INT imgWidth        - Google Image resized width
 	INT imgHeight       - Google Image resized height
-	STRING images	    - Google image url
+	STRING image	    - Google image url
         INT rmt_overall     - ratemyteachers.com
         INT rmt_easiness    - ratemyteachers.com
 	INT rmt_helpfulness - ratemyteachers.com
