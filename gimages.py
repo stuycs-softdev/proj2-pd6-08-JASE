@@ -7,11 +7,6 @@ def gImages(first,last):
     results = simplejson.load(urllib2.urlopen(urllib2.Request(url)))
     data = results['responseData']
     dataInfo = data['results']
-    #imgWidth = dataInfo['tbWidth']
-    #imgHeight = dataInfo['tbHeight']
-    #img = dataInfo['unescapedUrl']
-    #return (imgWidth,imgHeight,img)
-    # Iterate for each result and get unescaped url
     for myUrl in dataInfo:
         return (myUrl['tbWidth'],myUrl['tbHeight'],myUrl['unescapedUrl'])
 
