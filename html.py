@@ -1,13 +1,18 @@
 
 import stuyteachers
 
+
+def num(a):
+    return '{:,d}'.format(a)
+
 def table_overpaid(limit):
     r = '<table class="table"><tr class="danger"><th colspan="4" style="text-align:center;">Top '+str(limit)+' Overpaid Teachers</td></tr><tr class="danger"><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
 
     count = 0
     for x in stuyteachers.get_overpaid(limit):
+        x['salary'] = num(x['salary'])
         count += 1
-        r += '<tr class="danger"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td><td>$%(salary)d</td><td style="text-align:center">%(rmt_overall)d&#37;</td></tr>'%(x)
+        r += '<tr class="danger"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td><td>$%(salary)s</td><td style="text-align:center">%(rmt_overall)d&#37;</td></tr>'%(x)
 
     r += '</table>'
 
@@ -18,8 +23,9 @@ def table_underpaid(limit):
 
     count = 0
     for x in stuyteachers.get_underpaid(limit):
+        x['salary'] = num(x['salary'])
         count += 1
-        r += '<tr class="success"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td><td>$%(salary)d</td><td style="text-align:center">%(rmt_overall)d&#37;</td></tr>'%(x)
+        r += '<tr class="success"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td><td>$%(salary)s</td><td style="text-align:center">%(rmt_overall)d&#37;</td></tr>'%(x)
 
     r += '</table>'
 
@@ -34,7 +40,7 @@ def table_highest(param,table_title,column_title,limit):
 
     count = 0
     for x in stuyteachers.get(param,-1,limit,0,True):
-
+        x['salary'] = num(x['salary'])
         count += 1
         r += '<tr class="active"><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
 
@@ -128,7 +134,7 @@ def table_get2(loop, offset):
             r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
 
             if x['salary'] != -1:
-                r += '<td>$%(salary)d</td>'%(x)
+                r += '<td>$%s</td>'%(num(x['salary']))
             else:
                 r += '<td style="font-style:italic;">No Data</td>'
         

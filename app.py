@@ -13,6 +13,12 @@ c = MongoClient()
 
 fname = "data.txt"
 
+
+def num(a):
+    return '{:,d}'.format(a)
+
+
+
 @app.route("/")
 def index():
 
@@ -62,11 +68,11 @@ Clicking the above will search the internet for information about every teacher.
         r += """
 <div class="alert alert-info" style="text-align:left;">
 There are <strong>%d</strong> teachers and faculty members <em>(Only <strong>%d</strong> have salary information available and only <strong>%d</strong> have ratemyteachers.com information available)</em>
-<br />Combined yearly salary: <strong>$%d</strong>
-<br />Average salary: <strong>$%d</strong>
+<br />Combined yearly salary: <strong>$%s</strong>
+<br />Average salary: <strong>$%s</strong>
 <br />Average ratemyteachers.com rating: <strong>%d&#37;</strong>
 </div>
-"""%(stuyteachers.num_teachers(),stuyteachers.num_teachers({"salary":{"$ne":-1}}),stuyteachers.num_teachers({"rmt_overall":{"$ne":-1}}),stuyteachers.total_salary(),stuyteachers.average_salary(),stuyteachers.average_rmt())
+"""%(stuyteachers.num_teachers(),stuyteachers.num_teachers({"salary":{"$ne":-1}}),stuyteachers.num_teachers({"rmt_overall":{"$ne":-1}}),num(stuyteachers.total_salary()),num(stuyteachers.average_salary()),stuyteachers.average_rmt())
 
         r += '<table style="width:100%">'
         r += '<tr><td>'+html.table_overpaid(5)+'</td><td style="padding-left:20px;">'+html.table_underpaid(5)+'</td></tr>'
@@ -99,6 +105,7 @@ def teacher(n):
     d = stuyteachers.get_teacher(int(n))
 
     if d != None:
+        d['salary'] = num(d['salary'])
         r += """
 <h1>%(first)s %(last)s</h1>
 
@@ -199,8 +206,8 @@ def department():
         rat = sum(rating)/len(rating)
 
 
-        r += '<tr><td><a href="stuylist?title=%s">%s</a></td><td><span>%d</span></td><td>$<span>%d</span></td><td><span>%d</span>&#37;</td></tr>'%(x.replace(" ","+"),x,len(k),sal,rat)
-        js.append('["%s",%d,%d,%d]'%(x,len(k),sal,rat))
+        r += '<tr><td><a href="stuylist?title=%s">%s</a></td><td><span>%d</span></td><td>$<span>%s</span></td><td><span>%d</span>&#37;</td></tr>'%(x.replace(" ","+"),x,len(k),num(sal),rat)
+        js.append('["%s",%d,"%s",%d]'%(x,len(k),num(sal),rat))
 
     r += '</table>'
 

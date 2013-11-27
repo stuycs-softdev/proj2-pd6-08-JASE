@@ -159,6 +159,12 @@ def do_ratemyteachers():
                 else:
                     no.append(x)
 
+    for x in c.ratemt.Collections.find({"matched":False}):
+        for y in c.teachers.Collections.find({"rmt_overall":-1,"last":{"$regex":x['last']+" "}}):
+            teacher_update(y,x)
+#            print(y['first']+" "+y['last']+" = "+x['first']+" "+x['last'])
+
+
 
     print("Stuyvesant teachers matched with ratemyteachers.com results:")
     print("%d perfect matches"%(len(perfect)))

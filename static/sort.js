@@ -1,6 +1,7 @@
 
 
 curSort = "last";
+curDepSort = 0;
 curOrder = 1;
 limit = 20;
 offset = 0;
@@ -37,10 +38,10 @@ function sort(a,b){
 			   
 
 function sortDep(a,b){
-    curDepSort = a;
     curOrder = curDepSort == a ? -curOrder : b;
+    curDepSort = a;
     tab.sort(function(c,d){
-	return curOrder == 1 ? d[a]>c[a] : c[a]>d[a];
+	return curOrder == 1 ? c[a]>d[a] : d[a]>c[a];
     });
 
     a = 0;
