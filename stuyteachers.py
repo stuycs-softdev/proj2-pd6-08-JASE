@@ -22,6 +22,17 @@ import pFinder # gets addresses and phone numbers
 import salary  # gets salary
 import ratemt  # ratemyteachers.com
 
+c = MongoClient()
+
+
+# special cases
+special = [
+    # Department to be part of, Title
+    ["Computer Science","Coordinator Comp Sci"]
+]
+
+
+
 def getTeachers(s=None):
     url = "http://stuy.enschool.org/apps/staff/"
     result = BeautifulSoup(urllib.urlopen(url))
@@ -45,7 +56,6 @@ def getTeachers(s=None):
     return r
 
 def teachersToDatabase():
-    c = MongoClient()
     c.teachers.Collections.remove()
 
     print("Adding in teachers to database...")
@@ -105,7 +115,6 @@ def teachersToDatabase():
 
 
 def do_ratemyteachers():
-    c = MongoClient()
     c.ratemt.Collections.remove()
     # compare ratemyteachers
     print("Searching up results from ratemyteachers.com:")
@@ -160,7 +169,6 @@ def do_ratemyteachers():
 
 
 def teacher_update(x,k):
-    c = MongoClient()
     c.ratemt.Collections.update({"id":k["id"]},{"$set":{"matched":True}})
     c.teachers.Collections.update(
         {"id":x["id"]},
@@ -178,7 +186,6 @@ def teacher_update(x,k):
 def get(a,sort=1,limit=-1,offset=0,teachers=False):
     # sort:
 
-    c = MongoClient()
     r = []
 
 
@@ -203,7 +210,6 @@ def get(a,sort=1,limit=-1,offset=0,teachers=False):
 
 
 def search(ar,limit,offset=0):
-    c = MongoClient()
     r = []
 
 
@@ -212,6 +218,9 @@ def search(ar,limit,offset=0):
 
 
     m = []
+
+
+
 
     if "name" in ar and ar.get("name") != "":
         temp = ar.get("name").replace(" ","|").replace("-","|")
@@ -223,7 +232,16 @@ def search(ar,limit,offset=0):
                   })
 
     if "title" in ar and ar.get("title") != "":
-        m.append({"title":{"$regex":ar.get("title"),"$options":"-i"}})
+        k = [{"title":{"$regex":ar.get("title"),"$options":"-i"}}]
+
+        for x in special:
+            if ar.get("title") == x[0]:
+                k.append({"title":x[1]})
+
+        if len(k) > 1:
+            m.append({"$or":k})
+        else:
+            m.append(k[0])
 
 #        k = c.teachers.Collections.find({
 #                "$or":[
@@ -251,7 +269,6 @@ def get_underpaid(limit):
     return get_payscale(limit,False,.65,2)
 
 def get_payscale(limit,order,b1,b2):
-    c = MongoClient()
     a = []
 
     # salary and overall rating must be there
@@ -267,21 +284,74 @@ def get_payscale(limit,order,b1,b2):
     r = []
     for x in range(min(limit,len(a))):
         r.append(a[x][1])
+
     return r
 
 
 
 
 def get_departments():
-    c = MongoClient()
     k = c.teachers.Collections.find({"title":{"$regex":"Teacher"}}).distinct("title")
+
+    r = []
+    for x in k:
+        x = x.replace("Teacher ","").split(",")[0].split(" &")[0]
+
+        spl = x.split("/")
+        if len(spl) > 1:
+            for y in spl:
+                if y not in r:
+                    r.append(y)
+            
+        else:
+
+            if x not in r:
+                r.append(x)
+
+    return r
+
+
+def get_teachers_in_department(n):
+    r = []
+    for x in c.teachers.Collections.find({"title":{"$regex":n}}):
+        r.append(x)
+
+    for x in special:
+        if n == x[0]:
+            for y in c.teachers.Collections.find({"title":x[1]}):
+                r.append(y)
+
+    return r
+
+
 
 
 def get_teacher(n):
-    c = MongoClient()
     return c.teachers.Collections.find_one({"id":n})
 
-    
+def num_teachers(a={}):
+    return c.teachers.Collections.find(a).count()
+
+def total_salary():
+    sal = 0
+    k = c.teachers.Collections.find({"salary":{"$ne":-1}})
+    for x in k:
+        sal += x['salary']
+    return sal
+
+def average_salary():
+    sal = []
+    k = c.teachers.Collections.find({"salary":{"$ne":-1}})
+    for x in k:
+        sal.append(x['salary'])
+    return sum(sal)/len(sal)
+
+def average_rmt():
+    rmt = []
+    k = c.teachers.Collections.find({"rmt_overall":{"$ne":-1}})
+    for x in k:
+        rmt.append(x['rmt_overall'])
+    return sum(rmt)/len(rmt)
 
 
 if __name__ == "__main__":

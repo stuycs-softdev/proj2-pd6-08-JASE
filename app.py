@@ -58,6 +58,16 @@ Clicking the above will search the internet for information about every teacher.
             pass
 
         r += '<div class="alert alert-info">Teacher value calculated as the ratio between salary and <strong>ratemyteachers.com</strong> overall rating</div>'
+
+        r += """
+<div class="alert alert-info" style="text-align:left;">
+There are <strong>%d</strong> teachers and faculty members <em>(Only <strong>%d</strong> have salary information available and only <strong>%d</strong> have ratemyteachers.com information available)</em>
+<br />Combined yearly salary: <strong>$%d</strong>
+<br />Average salary: <strong>$%d</strong>
+<br />Average ratemyteachers.com rating: <strong>%d&#37;</strong>
+</div>
+"""%(stuyteachers.num_teachers(),stuyteachers.num_teachers({"salary":{"$ne":-1}}),stuyteachers.num_teachers({"rmt_overall":{"$ne":-1}}),stuyteachers.total_salary(),stuyteachers.average_salary(),stuyteachers.average_rmt())
+
         r += '<table style="width:100%">'
         r += '<tr><td>'+html.table_overpaid(5)+'</td><td style="padding-left:20px;">'+html.table_underpaid(5)+'</td></tr>'
         r += '<tr><td>'+html.table_highestpaid(5)+'</td><td style="padding-left:20px;">'+html.table_highest("rmt_overall","Top 5 Highest Rated Teachers","Overall Rating",5)+'</td></tr>'
@@ -153,6 +163,55 @@ def teacher(n):
     return render_template("search.html",table=r,search=html.searchCode({}))
 
 
+
+# departments
+@app.route("/department")
+def department():
+    r = ""
+
+    r += """<table class="table table-striped table-bordered" id="depTable">
+<tr class="active">
+<th colspan="4" style="font-style:italic;text-align:center;">Click a column header below to sort</th>
+</tr>
+<tr class="active" class="col_heads active">
+<th><a href="javascript:void(0)" onclick="sortDep(0,1)">Department</a></th>
+<th><a href="javascript:void(0)" onclick="sortDep(1,-1)"># Teachers</a></th>
+<th><a href="javascript:void(0)" onclick="sortDep(2,-1)">Average Salary</a></th>
+<th><a href="javascript:void(0)" onclick="sortDep(3,-1)">Average Rating</a></th>
+</tr>"""
+
+
+    js = []
+
+    for x in sorted(stuyteachers.get_departments()):
+        k = stuyteachers.get_teachers_in_department(x)
+
+        salary = []
+        rating = []
+        
+        for y in k:
+            if y["salary"] != -1:
+                salary.append(y["salary"])
+            if y["rmt_overall"] != -1:
+                rating.append(y["rmt_overall"])
+                
+        sal = sum(salary)/len(salary)
+        rat = sum(rating)/len(rating)
+
+
+        r += '<tr><td><a href="stuylist?title=%s">%s</a></td><td><span>%d</span></td><td>$<span>%d</span></td><td><span>%d</span>&#37;</td></tr>'%(x.replace(" ","+"),x,len(k),sal,rat)
+        js.append('["%s",%d,%d,%d]'%(x,len(k),sal,rat))
+
+    r += '</table>'
+
+    r += '<script type="text/javascript">tab = ['+",".join(js)+'];</script>'
+
+    return render_template("search.html",table=r,search=html.searchCode({}))
+
+
+
+
+
 @app.route("/js")
 def js():
     
@@ -218,4 +277,4 @@ def loadall():
 
 if __name__ == "__main__":
     app.debug = True
-    app.run()
+    app.run(host="0.0.0.0",port=5009)

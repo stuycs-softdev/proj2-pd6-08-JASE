@@ -4,7 +4,7 @@ curSort = "last";
 curOrder = 1;
 limit = 20;
 offset = 0;
-
+tab = [];
 
 
 function loading(text){
@@ -33,12 +33,30 @@ function sort(a,b){
 	curOrder = b;
     }
     updateSort(curSort,curOrder);
-}			   
+}
+			   
+
+function sortDep(a,b){
+    curDepSort = a;
+    curOrder = curDepSort == a ? -curOrder : b;
+    tab.sort(function(c,d){
+	return curOrder == 1 ? d[a]>c[a] : c[a]>d[a];
+    });
+
+    a = 0;
+    $("#depTable tr:gt(1)").each(function(){
+	$(this).children("td:first").html('<a href="stuylist?title='+tab[a][0].replace(" ","+")+'">'+tab[a][0]+'</a>');
+	for(x=1;x<$(this).children("td").length;x++){
+	    $(this).children("td:eq("+x+")").children("span").text(tab[a][x]);
+	}
+	a++;
+    });
+}
     
 
 
 function viewmore(a){
-    $(a).parent().parent().next().toggle();
+    $(a).parent().parent().next().next().toggle();
 }
 
 
