@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 #Tester
 def test():
-    url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-Kevin-Li")
+    url = urllib.urlopen("http://www.peoplefinder.com/people-search/NY-Mark-Halperin")
     result = BeautifulSoup(url)
     pridata = []
     data = []
@@ -94,11 +94,5 @@ def pFindNJ(first,last):
     return data 
 
 if __name__ == "__main__":
-    first = raw_input("Enter first name: ")
-    last = raw_input("Enter last name: ")
-    data = pFind(first,last)
-    if(data):
-        print(pFind(first,last))
-    else:
-        print("This guy doesn't exist")
+    print(test())
 
