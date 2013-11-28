@@ -50,6 +50,8 @@ Clicking the above will search the internet for information about every teacher.
     
     else:
 
+        r += '<div><a href="all" class="btn btn-primary btn-lg">Map of where teachers live</a></div>'
+
         try:
             a = request.args.get("type")
             if a:
@@ -63,7 +65,7 @@ Clicking the above will search the internet for information about every teacher.
         except:
             pass
 
-        r += '<div class="alert alert-info">Teacher value calculated as the ratio between salary and <strong>ratemyteachers.com</strong> overall rating</div>'
+#        r += '<div class="alert alert-info">Teacher value calculated as the ratio between salary and <strong>ratemyteachers.com</strong> overall rating</div>'
 
         r += """
 <div class="alert alert-info" style="text-align:left;">
@@ -293,16 +295,23 @@ def teacherjs(n):
 
     if len(a["address"]) > 0 and len(a["address"][0]["directions"]["routes"]):
         b = a["address"][0]["directions"]["routes"][0]["legs"][0]
+        path = str(a["address"][0]["directions"]["routes"][0]["legs"][0]["steps"])
         r += """
 <div class="panel panel-primary"><div class="panel-heading">Public Transportation Information</div><div class="panel-body">
 <strong>Commute Distance to Stuyvesant:</strong> %s<br />
 <strong>Commute Time to Stuyvesant:</strong> %s<br />
 <button class="btn btn-default" onclick="viewTransit()">View Transit Directions to Stuyvesant</button>
 </div></div>
-"""%(b["distance"]["text"],b["duration"]["text"])
-        path = a["address"][0]["directions"]["routes"][0]["overview_polyline"]["points"]
+<div class="panel panel-info"><div class="panel panel-heading">Public Transportation Directions</div><div class="panel-body" id="publicTransitDetails">&nbsp;</div></div>
+<script type="text/javascript">
+cp = %s;
+</script>
+"""%(b["distance"]["text"],b["duration"]["text"],path.replace("u'","'"))
+#        path = a["address"][0]["directions"]["routes"][0]["overview_polyline"]["points"]
 
-    return '%s %s'%(path,r)
+
+    return r
+#    return '%s %s'%(path,r)
 
 
 @app.route("/all")
@@ -342,7 +351,8 @@ addr = ["""
   </head>
   <body>
       <div id="map-canvas"></div>
-      <div id="sidebar" style="position:fixed;background:white;top:0;right:0;width:400px;z-index:999;height:100%;border-left:4px solid black;padding:5px;">
+      <div id="sidebar" style="position:fixed;background:white;top:0;right:0;width:400px;z-index:999;height:100%;border-left:4px solid black;padding:5px;overflow:auto;">
+</td><td style="width:400px;">
 <h1>Click a pin to load teacher information</h1>
 </div>
   </body>
