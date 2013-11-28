@@ -41,6 +41,7 @@ def updateTeachers():
             addr = []
 #            for y in x["address"]:
             y = x["address"][0]
+            if True:
                 try:
                     k = getCoords(y['address'].lstrip())
                     for z in k.keys():
