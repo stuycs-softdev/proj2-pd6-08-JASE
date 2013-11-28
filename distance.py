@@ -1,5 +1,5 @@
 
-
+import time
 import urllib2
 import json
 from pymongo import MongoClient
@@ -23,7 +23,14 @@ def getTeachs():
 
     for x in c.teachers.Collections.find():
         if len(x["address"]) > 0:
-            x["address"][0]["directions"] = getStuff(x["address"][0]["address"].lstrip())
+            k = getStuff(x["address"][0]["address"].lstrip())
+
+            while "error_message" in k:
+                time.sleep(2)
+                k = getStuff(x["address"][0]["address"].lstrip())
+                
+
+            x["address"][0]["directions"] = k
            
             print("%s %s"%(x["first"],x["last"]))
  

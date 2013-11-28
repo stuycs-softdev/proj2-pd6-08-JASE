@@ -1,3 +1,4 @@
+p = new google.maps.Polyline(null);
 
 function initialize() {
     var myLatlng = new google.maps.LatLng(40.7143528,-73.90597309999999);
@@ -25,16 +26,15 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 function showData(n){
     $.get("teacherjs-"+n.replace(" ","+"),function(d){
-	curPath = d.split(" ")[0];
-	$("#sidebar").html(d.replace(curPath+" ",""));
+	curPath = google.maps.geometry.encoding.decodePath(d.split(" ")[0])
+	$("#sidebar").html(d.replace(d.split(" ")[0],""))
     });
 }
 
 function viewTransit(){
-    k = google.maps.geometry.encoding.decodePath(curPath)
-
-    var p = new google.maps.Polyline({
-	path: k,
+    p.setMap(null);
+    p = new google.maps.Polyline({
+	path: curPath,
 	geodesic: true,
 	strokeColor: '#0000ff',
 	strokeOpacity: 1.0,

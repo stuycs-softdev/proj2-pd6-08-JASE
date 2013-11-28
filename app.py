@@ -263,7 +263,7 @@ def teacherjs(n):
 
     a = c.teachers.Collections.find_one({"first":first,"last":n.replace(first+"+","")})
 
-
+    path = ""
     r += """ 
 <table class="table table-bordered">
 <tr class="active"><td colspan="2"><h1>%(first)s %(last)s</h1></td></tr>
@@ -292,7 +292,7 @@ def teacherjs(n):
 
 
     if len(a["address"]) > 0 and len(a["address"][0]["directions"]["routes"]):
-        b = a["address"][0]["directions"]["routes"]["legs"]
+        b = a["address"][0]["directions"]["routes"][0]["legs"][0]
         r += """
 <div class="panel panel-primary"><div class="panel-heading">Public Transportation Information</div><div class="panel-body">
 <strong>Commute Distance to Stuyvesant:</strong> %s<br />
@@ -300,8 +300,9 @@ def teacherjs(n):
 <button class="btn btn-default" onclick="viewTransit()">View Transit Directions to Stuyvesant</button>
 </div></div>
 """%(b["distance"]["text"],b["duration"]["text"])
+        path = a["address"][0]["directions"]["routes"][0]["overview_polyline"]["points"]
 
-    return r
+    return '%s %s'%(path,r)
 
 
 @app.route("/all")
