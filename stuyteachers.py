@@ -396,8 +396,7 @@ if __name__ == "__main__":
 #        c.teachers.Collections.update({"id":x["id"]},{"$set":{"address2":x["address"],"address":None}},upsert=True)
 
     for x in c.teachers.Collections.find():
-        if x["address"] == None:
-            c.teachers.Collections.update({"id":x["id"]},{"$set":{"address":[]}},upsert=True)
+        c.teachers.Collections.update({"id":x["id"]},{"$set":{"address2":[]}},upsert=True)
 
 #    for x in c.teachers.Collections.find():
 #        print("%s %s"%(x['first'],x['last']))
