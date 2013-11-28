@@ -32,6 +32,8 @@ function showData(n){
 }
 
 function viewTransit(){
+    $("#publicTransitWrap").toggle();
+
     for(x=0;x<plines.length;x++){
 	plines[x].setMap(null);
     }

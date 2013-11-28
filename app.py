@@ -268,7 +268,9 @@ def teacherjs(n):
     path = ""
     r += """ 
 <table class="table table-bordered">
-<tr class="active"><td colspan="2"><h1>%(first)s %(last)s</h1></td></tr>
+<tr class="active"><td colspan="2"><a href="teacher-%(id)d"><h1>%(first)s %(last)s</h1></a></td></tr>"""%(a)
+    r += '<tr class="active"><td colspan="2"><strong>%s</strong><br />%s'%(a["address"][0]["address"],a["address"][0]["phoneNum"])
+    r += """
 <tr class="active"><td>Title</td><td>%(title)s</td></tr>"""%(a)
 
     if a["salary"] == -1:
@@ -301,8 +303,9 @@ def teacherjs(n):
 <strong>Commute Distance to Stuyvesant:</strong> %s<br />
 <strong>Commute Time to Stuyvesant:</strong> %s<br />
 <button class="btn btn-default" onclick="viewTransit()">View Transit Directions to Stuyvesant</button>
+<br /><div id="publicTransitWrap" style="display:none;" class="panel panel-info"><div class="panel panel-heading">Public Transportation Directions</div><div class="panel-body" id="publicTransitDetails">&nbsp;</div></div>
 </div></div>
-<div class="panel panel-info"><div class="panel panel-heading">Public Transportation Directions</div><div class="panel-body" id="publicTransitDetails">&nbsp;</div></div>
+
 <script type="text/javascript">
 cp = %s;
 </script>
@@ -322,7 +325,8 @@ def showAll():
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Simple markers</title>
+    <link rel="shortcut icon" href="../static/stalkmyteachers.jpg">
+    <title>StalkMyTeachers - Map</title>
     <style>
       html, body, #map-canvas {
         height: 100%;
@@ -351,9 +355,11 @@ addr = ["""
   </head>
   <body>
       <div id="map-canvas"></div>
-      <div id="sidebar" style="position:fixed;background:white;top:0;right:0;width:400px;z-index:999;height:100%;border-left:4px solid black;padding:5px;overflow:auto;">
-</td><td style="width:400px;">
+      <div style="position:fixed;background:white;top:0;right:0;width:400px;z-index:999;height:100%;border-left:4px solid black;padding:0;overflow:auto;">
+<div style="text-align:center;border-bottom:2px solid black;padding:5px;"><a href="/">Back to Home Page</a></div>
+<div id="sidebar" style="padding:5px;">
 <h1>Click a pin to load teacher information</h1>
+</div>
 </div>
   </body>
 </html>
