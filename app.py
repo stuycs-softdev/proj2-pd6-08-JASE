@@ -149,7 +149,14 @@ def teacher(n):
 <div style="text-align:center;">
 <div class="btn-group">
 <button type="button" onclick="mapZoomOut()" class="btn btn-default">-</button>
-<button type="button" onclick="mapZoomIn()" class="btn btn-default">+</button><br />
+<button type="button" onclick="mapZoomIn()" class="btn btn-default">+</button>
+</div>
+<div class="btn-group">
+<button type="button" onclick="mapRoadMap()" class="btn btn-default">Normal Map</button>
+<button type="button" onclick="mapStreetView()" class="btn btn-default">Street View</button>
+</div>
+
+<br /><br />
 <img src="%s" id="mapImg" />
 </div>
 </td></tr>"""%(d["address"][0]["address"],gmap.gmap(d["address"][0]["address"]))
@@ -239,6 +246,67 @@ def js():
         return str(html.table_get(param,sort,limit,int(offset)))
     except:
         return '{error:true}'
+
+
+@app.route("/all")
+def showAll():
+    r = """
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple markers</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script>
+
+addr = ["""
+
+    k = []
+
+    for x in c.teachers.Collections.find():
+        if len(x["address"]) > 0 and "lat" in x["address"][0]:
+            k.append('["'+x["first"]+' '+x["last"]+'",'+str(x["address"][0]["lat"])+','+str(x["address"][0]["long"])+']')
+
+    r += ",".join(k)
+
+    r+= """];
+function initialize() {
+  var myLatlng = new google.maps.LatLng(40.7143528,-73.90597309999999);
+  var mapOptions = {
+    zoom: 13,
+    center: myLatlng
+  }
+  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+  for(x=0;x<addr.length;x++){
+    var marker = new google.maps.Marker({
+      position: new google.maps.LatLng(addr[x][1],addr[x][2]),
+      map: map,
+      title: addr[x][0]
+    });
+  }
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>
+"""
+    return r
+
+
 
 
 @app.route("/preload")
