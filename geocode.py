@@ -39,7 +39,8 @@ def updateTeachers():
     for x in c.teachers.Collections.find():
         if len(x["address"]) > 0:
             addr = []
-            for y in x["address"]:
+#            for y in x["address"]:
+            y = x["address"][0]
                 try:
                     k = getCoords(y['address'].lstrip())
                     for z in k.keys():
