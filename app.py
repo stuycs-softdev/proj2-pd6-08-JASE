@@ -307,8 +307,6 @@ google.maps.event.addDomListener(window, 'load', initialize);
     return r
 
 
-
-
 @app.route("/preload")
 def preload():
     f = open(fname,"r")

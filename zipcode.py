@@ -7,8 +7,8 @@ def zipinfo(zipcode):
     url = "http://zipwho.com/?zip=" + zipcode  + "&city=&filters=--_--_--_--&state=&mode=zip"
     page = BeautifulSoup(urllib.urlopen(url))
     x = page.find("script").get_text()
-    return x
+    return x.split('return "')[1].split('";')[0]
 
 
 if __name__ == "__main__":
-    print(zipinfo(sys.argv[1]))
+    print(zipinfo("10075"))
