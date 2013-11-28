@@ -113,6 +113,20 @@ def teachersToDatabase():
 
 
 
+def fix_address(n):
+    r = []
+    
+    for x in n:
+        if "(212)" in x["phoneNum"] or "(718)" in x["phoneNum"] or "NeW York" in x["address"] or "Brooklyn" in x["address"]:
+            r.append(x)
+            n.remove(x)
+
+    if len(r) > 0:
+        return r
+    return n
+
+
+
 
 def do_ratemyteachers():
     c.ratemt.Collections.remove()
@@ -376,6 +390,22 @@ if __name__ == "__main__":
 #        res[x]["id"] = x
 #        c.ratemt.Collections.insert(res[x])
 
-    teachersToDatabase()
+#    teachersToDatabase()
+
+#    for x in c.teachers.Collections.find():
+#        c.teachers.Collections.update({"id":x["id"]},{"$set":{"address2":x["address"],"address":None}},upsert=True)
+
+    for x in c.teachers.Collections.find():
+        if x["address"] == None:
+            c.teachers.Collections.update({"id":x["id"]},{"$set":{"address":[]}},upsert=True)
+
+#    for x in c.teachers.Collections.find():
+#        print("%s %s"%(x['first'],x['last']))
+#        a = fix_address(pFinder.pFind(x["first"],x["last"]))
+#        if len(a) > 0:
+#            print(a[0]["address"].lstrip())
+#            c.teachers.Collections.update({"id":x["id"]},{"$set":{"address":a}},upsert=True)
+
+#    print(str(fix_address(pFinder.pFind("Mark","Halperin"))))
 
 #    do_ratemyteachers()
