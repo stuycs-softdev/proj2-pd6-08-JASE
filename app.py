@@ -15,7 +15,7 @@ fname = "data.txt"
 
 
 def num(a):
-    return '{:,d}'.format(a)
+    return '{:,.0f}'.format(a)
 
 
 
@@ -105,7 +105,6 @@ def teacher(n):
     d = stuyteachers.get_teacher(int(n))
 
     if d != None:
-        d['salary'] = num(d['salary'])
         r += """
 <h1>%(first)s %(last)s</h1>
 
@@ -114,8 +113,16 @@ def teacher(n):
 <tr class="active"><th colspan="2" style="text-align:center;">Basic Information</td></tr>
 <tr class="active"><td>First Name</td><td>%(first)s</td></tr>
 <tr class="active"><td>Last Name</td><td>%(last)s</td></tr>
-<tr class="active"><td>Title</td><td>%(title)s</td></tr>
-<tr class="active"><td>Yearly Salary</td><td>$%(salary)s<br /><small>[As of year %(salary_year)s]</small></td></tr>"""%(d)
+<tr class="active"><td>Title</td><td>%(title)s</td></tr>"""%(d)
+
+        if d["salary"] == -1:
+            r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold;">Salary data unavailable</td></tr>'
+        else:
+            d['salary'] = num(d['salary'])
+            r += '<tr class="active"><td>Yearly Salary</td><td>$%(salary)s<br /><small>[As of year %(salary_year)s]</small></td></tr>'%(d)
+
+
+
 
         if d["rmt_overall"] == -1:
             r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold;">Ratemyteachers.com information unavailable</td></tr>'
@@ -149,7 +156,14 @@ def teacher(n):
 <div style="text-align:center;">
 <div class="btn-group">
 <button type="button" onclick="mapZoomOut()" class="btn btn-default">-</button>
-<button type="button" onclick="mapZoomIn()" class="btn btn-default">+</button><br />
+<button type="button" onclick="mapZoomIn()" class="btn btn-default">+</button>
+</div>
+<div class="btn-group">
+<button type="button" onclick="mapRoadMap()" class="btn btn-default">Normal Map</button>
+<button type="button" onclick="mapStreetView()" class="btn btn-default">Street View</button>
+</div>
+
+<br /><br />
 <img src="%s" id="mapImg" />
 </div>
 </td></tr>"""%(d["address"][0]["address"],gmap.gmap(d["address"][0]["address"]))
@@ -239,6 +253,102 @@ def js():
         return str(html.table_get(param,sort,limit,int(offset)))
     except:
         return '{error:true}'
+
+
+@app.route("/teacherjs-<n>")
+def teacherjs(n):
+    r = ""
+
+    first = n.split("+")[0]
+
+    a = c.teachers.Collections.find_one({"first":first,"last":n.replace(first+"+","")})
+
+    path = ""
+    r += """ 
+<table class="table table-bordered">
+<tr class="active"><td colspan="2"><h1>%(first)s %(last)s</h1></td></tr>
+<tr class="active"><td>Title</td><td>%(title)s</td></tr>"""%(a)
+
+    if a["salary"] == -1:
+        r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold;">Salary data unavailable</td></tr>'
+    else:
+        a['salary'] = num(a["salary"])
+        r += '<tr class="active"><td>Yearly Salary</td><td>$%(salary)s<br /><small>[As of year %(salary_year)s]</small></td></tr>'%(a)
+
+    if a["rmt_overall"] == -1:
+        r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold;">Ratemyteachers.com information unavailable</td></tr>'
+    else:
+        r += """
+<tr class="active"><td>Ratemyteachers.com</td><td>
+<table>
+  <tr><td style="font-weight:bold;">Overall</td><td style="font-weight:bold;">%(rmt_overall)d&#37;</td></tr>
+  <tr><td>Easiness</td><td> &nbsp; %(rmt_easiness)d</td></tr>
+  <tr><td>Helpfulness</td><td> &nbsp; %(rmt_helpfulness)d</td></tr>
+  <tr><td>Clarity</td><td> &nbsp; %(rmt_clarity)d</td></tr>
+</table>
+</td></tr>"""%(a)
+
+    r += '</table>'
+
+
+    if len(a["address"]) > 0 and len(a["address"][0]["directions"]["routes"]):
+        b = a["address"][0]["directions"]["routes"][0]["legs"][0]
+        r += """
+<div class="panel panel-primary"><div class="panel-heading">Public Transportation Information</div><div class="panel-body">
+<strong>Commute Distance to Stuyvesant:</strong> %s<br />
+<strong>Commute Time to Stuyvesant:</strong> %s<br />
+<button class="btn btn-default" onclick="viewTransit()">View Transit Directions to Stuyvesant</button>
+</div></div>
+"""%(b["distance"]["text"],b["duration"]["text"])
+        path = a["address"][0]["directions"]["routes"][0]["overview_polyline"]["points"]
+
+    return '%s %s'%(path,r)
+
+
+@app.route("/all")
+def showAll():
+    r = """
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple markers</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=geometry"></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <link href="../static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script>
+
+addr = ["""
+
+    k = []
+
+    for x in c.teachers.Collections.find():
+        if len(x["address"]) > 0 and "lat" in x["address"][0]:
+            k.append('["'+x["first"]+' '+x["last"]+'",'+str(x["address"][0]["lat"])+','+str(x["address"][0]["long"])+']')
+
+    r += ",".join(k)
+
+    r+= """];
+    </script>
+    <script type="text/javascript" src="static/maps.js"></script>
+  </head>
+  <body>
+      <div id="map-canvas"></div>
+      <div id="sidebar" style="position:fixed;background:white;top:0;right:0;width:400px;z-index:999;height:100%;border-left:4px solid black;padding:5px;">
+<h1>Click a pin to load teacher information</h1>
+</div>
+  </body>
+</html>
+"""
+    return r
 
 
 @app.route("/preload")

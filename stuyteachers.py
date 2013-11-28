@@ -357,7 +357,11 @@ def average_rmt():
     k = c.teachers.Collections.find({"rmt_overall":{"$ne":-1}})
     for x in k:
         rmt.append(x['rmt_overall'])
-    return sum(rmt)/len(rmt)
+
+    if len(rmt) > 0:
+        return sum(rmt)/len(rmt)
+    else:
+        return 0
 
 
 if __name__ == "__main__":

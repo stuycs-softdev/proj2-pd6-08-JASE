@@ -41,7 +41,11 @@ function sortDep(a,b){
     curOrder = curDepSort == a ? -curOrder : b;
     curDepSort = a;
     tab.sort(function(c,d){
-	return curOrder == 1 ? c[a]>d[a] : d[a]>c[a];
+	var cc = c[1];
+	var dd = d[1];
+	return curOrder == 1 ? cc>dd : dd>cc;
+//	return curOrder == 1 ? c[a]>d[a] : d[a]>c[a];
+//	return curOrder == 1 ? c[a]-d[a] : d[a]-c[a];
     });
 
     a = 0;
@@ -82,12 +86,33 @@ function mapZoomIn(){
 	$("#mapImg").attr("src",a.replace(/zoom=(\d+)/i,"zoom="+zoom))
 }
 
+function mapRoadMap(){
+    a = $("#curMap").text()
+    $("#mapImg").attr("src","http://maps.googleapis.com/maps/api/staticmap?center="+a+"&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C"+a+"&sensor=false");
+}
+function mapStreetView(){
+    a = $("#curMap").text()
+    $("#mapImg").attr("src","https://maps.googleapis.com/maps/api/streetview?size=600x300&location="+a+"&pitch=10&sensor=false");
+}
+
+
+function mapMapView(){
+    a = $("#curMap").text()
+    $("#mapImg").attr("src","http://maps.googleapis.com/maps/api/staticmap?center="+a+"&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C"+a+"&sensor=false")
+}
+
+function mapStreetView(){
+    a = $("#curMap").text();
+    $("#mapImg").attr("src","http://maps.googleapis.com/maps/api/streetview?size=600x300&location="+a+"&sensor=false");
+}
+
 
 $(function(){
     if(location.href.match("/teacher-")){
 	$("tr.mapListing").click(function(){
 	    $(this).parent().children("tr.success").attr("class","warning");
 	    $(this).attr("class","success");
+	    $("#curMap").text($(this).children("td:first").children("a").text())
 	    a = $(this).children("td:eq(0)").children("a").text().replace(" ","+")
 	    $("#mapImg").attr("src","http://maps.googleapis.com/maps/api/staticmap?center="+a+"&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C"+a+"&sensor=false")
 	});
