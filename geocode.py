@@ -39,19 +39,18 @@ def updateTeachers():
     for x in c.teachers.Collections.find():
         if len(x["address"]) > 0:
             addr = []
-#            for y in x["address"]:
-            y = x["address"][0]
-            if True:
-                try:
-                    k = getCoords(y['address'].lstrip())
-                    for z in k.keys():
-                        y[z] = k[z]
-                        addr.append(y)
-                    print("%s %s - %s - %s"%(x['first'],x['last'],y['address'],str(k)))
-                except:
-                    pass
 
-            c.teachers.Collections.update({"id":x['id']},{"$set":{"address":addr}})
+            y = x["address"][0]
+
+            try:
+                k = getCoords(y['address'].lstrip())
+                for z in k.keys():
+                    y[z] = k[z]
+                print("%s %s - %s - %s"%(x['first'],x['last'],y['address'],str(k)))
+            except:
+                pass
+
+            c.teachers.Collections.update({"id":x['id']},{"$set":{"address":x["address"]}})
 
 
 
