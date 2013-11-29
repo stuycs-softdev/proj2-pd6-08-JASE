@@ -50,6 +50,8 @@ Clicking the above will search the internet for information about every teacher.
     
     else:
 
+        r += '<div><a href="all" class="btn btn-primary btn-lg">Map of where teachers live</a></div>'
+
         try:
             a = request.args.get("type")
             if a:
@@ -63,7 +65,7 @@ Clicking the above will search the internet for information about every teacher.
         except:
             pass
 
-        r += '<div class="alert alert-info">Teacher value calculated as the ratio between salary and <strong>ratemyteachers.com</strong> overall rating</div>'
+#        r += '<div class="alert alert-info">Teacher value calculated as the ratio between salary and <strong>ratemyteachers.com</strong> overall rating</div>'
 
         r += """
 <div class="alert alert-info" style="text-align:left;">
@@ -266,7 +268,9 @@ def teacherjs(n):
     path = ""
     r += """ 
 <table class="table table-bordered">
-<tr class="active"><td colspan="2"><h1>%(first)s %(last)s</h1></td></tr>
+<tr class="active"><td colspan="2"><a href="teacher-%(id)d"><h1>%(first)s %(last)s</h1></a></td></tr>"""%(a)
+    r += '<tr class="active"><td colspan="2"><strong>%s</strong><br />%s'%(a["address"][0]["address"],a["address"][0]["phoneNum"])
+    r += """
 <tr class="active"><td>Title</td><td>%(title)s</td></tr>"""%(a)
 
     if a["salary"] == -1:
@@ -293,16 +297,48 @@ def teacherjs(n):
 
     if len(a["address"]) > 0 and len(a["address"][0]["directions"]["routes"]):
         b = a["address"][0]["directions"]["routes"][0]["legs"][0]
+        path = str(a["address"][0]["directions"]["routes"][0]["legs"][0]["steps"])
         r += """
-<div class="panel panel-primary"><div class="panel-heading">Public Transportation Information</div><div class="panel-body">
+<div class="btn-group">
+<button class="btn btn-primary" onclick="viewDirections(0)">MTA Directions</button>
+<button class="btn btn-info" onclick="viewDirections(1)">CitiBike Directions</button>
+</div><br />
+<div class="panel panel-primary directions" style="display:none"><div class="panel-heading">MTA Information</div><div class="panel-body">
 <strong>Commute Distance to Stuyvesant:</strong> %s<br />
 <strong>Commute Time to Stuyvesant:</strong> %s<br />
-<button class="btn btn-default" onclick="viewTransit()">View Transit Directions to Stuyvesant</button>
-</div></div>
-"""%(b["distance"]["text"],b["duration"]["text"])
-        path = a["address"][0]["directions"]["routes"][0]["overview_polyline"]["points"]
+<div id="publicTransitDetails">&nbsp;</div>
+</div></div>"""%(b["distance"]["text"],b["duration"]["text"])
 
-    return '%s %s'%(path,r)
+        if "citibike" in a["address"][0].keys():
+            cc = a["address"][0]["citibike"]
+            r += """
+<div class="panel panel-info directions" style="display:none"><div class="panel-heading">CitiBike Information</div><div class="panel-body">
+<strong>Nearest CitiBike Station:</strong> %s<br />
+<strong>Walking Distance to CitiBike Station:</strong> %s<br />
+<strong>Walking Time to CitiBike Station:</strong> %s<br />
+<strong>CitiBike Distance to Stuyvesant:</strong> %s<br />
+<strong>CitiBike Time to Stuyvesant:</strong> %s<br />
+</div></div>"""%(cc["bike_station"],cc["walk_distance"],cc["walk_time"],cc["bike_distance"],cc["bike_time"])
+
+            r += """<script type="text/javascript">
+cb = ["%s","%s"];
+</script>"""%(cc["bike_polyline"]["points"].replace("\\","\\\\"),cc["walk_polyline"]["points"].replace("\\","\\\\"))
+
+        else:
+            r += """
+<div class="panel panel-info directions" style="display:none"><div class="panel-heading">CitiBike Information</div><div class="panel-body">
+Only available to teachers who live in Manhattan and Brooklyn</div></div>"""
+
+        r += """
+<script type="text/javascript">
+cp = %s;
+</script>
+"""%(path.replace("u'","'"))
+#        path = a["address"][0]["directions"]["routes"][0]["overview_polyline"]["points"]
+
+
+    return r
+#    return '%s %s'%(path,r)
 
 
 @app.route("/all")
@@ -313,7 +349,8 @@ def showAll():
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Simple markers</title>
+    <link rel="shortcut icon" href="../static/stalkmyteachers.jpg">
+    <title>StalkMyTeachers - Map</title>
     <style>
       html, body, #map-canvas {
         height: 100%;
@@ -342,8 +379,11 @@ addr = ["""
   </head>
   <body>
       <div id="map-canvas"></div>
-      <div id="sidebar" style="position:fixed;background:white;top:0;right:0;width:400px;z-index:999;height:100%;border-left:4px solid black;padding:5px;">
+      <div style="position:fixed;background:white;top:0;right:0;width:400px;z-index:999;height:100%;border-left:4px solid black;padding:0;overflow:auto;">
+<div style="text-align:center;border-bottom:2px solid black;padding:5px;"><a href="/">Back to Home Page</a></div>
+<div id="sidebar" style="padding:5px;">
 <h1>Click a pin to load teacher information</h1>
+</div>
 </div>
   </body>
 </html>
