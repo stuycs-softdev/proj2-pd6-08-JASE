@@ -324,6 +324,11 @@ def teacherjs(n):
 cb = ["%s","%s"];
 </script>"""%(cc["bike_polyline"]["points"].replace("\\","\\\\"),cc["walk_polyline"]["points"].replace("\\","\\\\"))
 
+        else:
+            r += """
+<div class="panel panel-info directions" style="display:none"><div class="panel-heading">CitiBike Information</div><div class="panel-body">
+Only available to teachers who live in Manhattan and Brooklyn</div></div>"""
+
         r += """
 <script type="text/javascript">
 cp = %s;
