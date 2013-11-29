@@ -46,11 +46,11 @@ def zipinfo(zipcode):
     for br in page2.find_all("br"):
         try:
             if br.find("b").get_text() == "Estimated median house or condo value in 2011: ": 
-                price = "$" + br.get_text().split("\n")[0].split("$")[1]
+                price = "$" + br.get_text().split("\n")[0].split("$")[1].split('\r')[0]
         except:
             pass
 
-    data['median house or condo value'] = price
+    data['Median house or condo value'] = price
             
     
     return data
