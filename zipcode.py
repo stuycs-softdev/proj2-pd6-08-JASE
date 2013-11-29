@@ -50,9 +50,9 @@ def zipinfo(zipcode):
         except:
             pass
 
-    
+    data['median house or condo value'] = price
             
-    print(price)
+    
     return data
 
 
