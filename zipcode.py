@@ -34,4 +34,4 @@ def zipinfo(zipcode):
 
 
 if __name__ == "__main__":
-    print(zipinfo("1011215"))
+    print(zipinfo(sys.argv[1]))
