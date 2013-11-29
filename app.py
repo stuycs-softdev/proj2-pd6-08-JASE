@@ -299,17 +299,36 @@ def teacherjs(n):
         b = a["address"][0]["directions"]["routes"][0]["legs"][0]
         path = str(a["address"][0]["directions"]["routes"][0]["legs"][0]["steps"])
         r += """
-<div class="panel panel-primary"><div class="panel-heading">Public Transportation Information</div><div class="panel-body">
+<div class="btn-group">
+<button class="btn btn-primary" onclick="viewDirections(0)">MTA Directions</button>
+<button class="btn btn-info" onclick="viewDirections(1)">CitiBike Directions</button>
+</div><br />
+<div class="panel panel-primary directions" style="display:none"><div class="panel-heading">MTA Information</div><div class="panel-body">
 <strong>Commute Distance to Stuyvesant:</strong> %s<br />
 <strong>Commute Time to Stuyvesant:</strong> %s<br />
-<button class="btn btn-default" onclick="viewTransit()">View Transit Directions to Stuyvesant</button>
-<br /><div id="publicTransitWrap" style="display:none;" class="panel panel-info"><div class="panel panel-heading">Public Transportation Directions</div><div class="panel-body" id="publicTransitDetails">&nbsp;</div></div>
-</div></div>
+<div id="publicTransitDetails">&nbsp;</div>
+</div></div>"""%(b["distance"]["text"],b["duration"]["text"])
 
+        if "citibike" in a["address"][0].keys():
+            cc = a["address"][0]["citibike"]
+            r += """
+<div class="panel panel-info directions" style="display:none"><div class="panel-heading">CitiBike Information</div><div class="panel-body">
+<strong>Nearest CitiBike Station:</strong> %s<br />
+<strong>Walking Distance to CitiBike Station:</strong> %s<br />
+<strong>Walking Time to CitiBike Station:</strong> %s<br />
+<strong>CitiBike Distance to Stuyvesant:</strong> %s<br />
+<strong>CitiBike Time to Stuyvesant:</strong> %s<br />
+</div></div>"""%(cc["bike_station"],cc["walk_distance"],cc["walk_time"],cc["bike_distance"],cc["bike_time"])
+
+            r += """<script type="text/javascript">
+cb = ["%s","%s"];
+</script>"""%(cc["bike_polyline"]["points"].replace("\\","\\\\"),cc["walk_polyline"]["points"].replace("\\","\\\\"))
+
+        r += """
 <script type="text/javascript">
 cp = %s;
 </script>
-"""%(b["distance"]["text"],b["duration"]["text"],path.replace("u'","'"))
+"""%(path.replace("u'","'"))
 #        path = a["address"][0]["directions"]["routes"][0]["overview_polyline"]["points"]
 
 

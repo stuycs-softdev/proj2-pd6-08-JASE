@@ -31,9 +31,19 @@ function showData(n){
     });
 }
 
-function viewTransit(){
-    $("#publicTransitWrap").toggle();
 
+
+function viewDirections(n){
+    $("div.directions").slideUp("slow");
+	$("div.directions:eq("+n+")").slideDown("slow");
+    
+	if(n == 0) viewTransit();
+	else if(n == 1) viewCitiBike();
+
+}
+
+
+function viewTransit(){
     for(x=0;x<plines.length;x++){
 	plines[x].setMap(null);
     }
@@ -71,4 +81,24 @@ function viewTransit(){
 
     $("#publicTransitDetails").html("<table><tr><td>"+dir.join("</td></tr><tr><td>")+"</td></tr></table>");
 
+
+}
+
+    
+function viewCitiBike(){
+    for(x=0;x<plines.length;x++){
+	plines[x].setMap(null);
+    }
+
+    for(x=0;x<2;x++){
+	p = new google.maps.Polyline({
+	    path: google.maps.geometry.encoding.decodePath(cb[x]),
+	    geodesic: true,
+	    strokeColor: x==0?"#00B8F1":"#000000",
+	    strokeOpacity: 1.0,
+	    strokeWeight: x==0?4:2
+	});
+	p.setMap(map);
+	plines[x] = p;
+    }
 }
