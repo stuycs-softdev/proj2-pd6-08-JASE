@@ -35,7 +35,24 @@ def zipinfo(zipcode):
         namenum += 1
         statnum += 1
         
+    url2 = "http://www.city-data.com/zips/"+zipcode+".html"
 
+    request2 = urllib2.Request(url2, headers={'User-Agent':"Magic Browser"})
+    result2 = urllib2.urlopen(request2)
+
+    page2 = BeautifulSoup(result2)
+
+    price = '';
+    for br in page2.find_all("br"):
+        try:
+            if br.find("b").get_text() == "Estimated median house or condo value in 2011: ": 
+                price = "$" + br.get_text().split("\n")[0].split("$")[1]
+        except:
+            pass
+
+    
+            
+    print(price)
     return data
 
 
