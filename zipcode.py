@@ -25,10 +25,11 @@ def zipinfo(zipcode):
     while(statnum < len(x)):
         if x[statnum].isdigit():
             x[statnum] = int(x[statnum])
-        try:
-            x[statnum] = float(x[statnum])
-        except ValueError:
-            pass
+        else:
+            try:
+                x[statnum] = float(x[statnum])
+            except ValueError:
+                pass
         
         data[x[namenum]] = x[statnum]
         namenum += 1
