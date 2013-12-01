@@ -50,8 +50,6 @@ Clicking the above will search the internet for information about every teacher.
     
     else:
 
-        r += '<div><a href="all" class="btn btn-primary btn-lg">Map of where teachers live</a></div>'
-
         try:
             a = request.args.get("type")
             if a:
@@ -139,6 +137,44 @@ def teacher(n):
 </table>
 </td></tr>
 """%(d)
+
+        r += """
+</table>
+
+<table class="table table-bordered">
+<tr class="active"><td colspan="2" style="text-align:center;font-weight:bold;">Neighborhood Information</td></tr>
+"""
+        
+        if not (len(d["address"]) > 0 and "zipinfo" in d["address"][0].keys()):
+            r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold">Neighborhood information unavailable</td></tr>'
+
+        else:
+            r += '<tr class="active"><td colspan="2" style="text-align:center;">The population of <strong>%d</strong> is <em>%s</em></td></tr>'%(d["zip_zip"],num(d["zip_Population"]))
+            nb = [
+                ["Median Income","MedianIncome","$%s"],
+                ["Median Age","MedianAge","%d"],
+                ["College Graduates","CollegeDegreePercent","%.1f&#37;"],
+                [],
+                ["Percent Asian","AsianPercent","%.1f&#37;"],
+                ["Percent Black","BlackPercent","%.1f&#37;"],
+                ["Percent Hispanic","HispanicEthnicityPercent","%.1f&#37;"],
+                ["Percent White","WhitePercent","%.1f&#37;"],
+                [],
+                ["Percent Married","MarriedPercent","%.1f&#37;"],
+                ["Percent Divorced","DivorcedPercent","%.1f&#37;"]
+                ]
+
+            for z in nb:
+                if len(z) == 0:
+                    r += '<tr class="active"><td colspan="2" style="font-size:4px;">&nbsp;</td></tr>'
+                else:
+                    if z[2][0] == "$":
+                        r += '<tr class="active"><td>%s</td><td>%s</td></tr>'%(z[0],z[2]%(num(d["zip_"+z[1]])))
+                    else:
+                        r += '<tr class="active"><td>%s</td><td>%s</td></tr>'%(z[0],z[2]%(d["zip_"+z[1]]))
+
+
+            
 
         r += """
 </table>
@@ -382,7 +418,11 @@ addr = ["""
       <div style="position:fixed;background:white;top:0;right:0;width:400px;z-index:999;height:100%;border-left:4px solid black;padding:0;overflow:auto;">
 <div style="text-align:center;border-bottom:2px solid black;padding:5px;"><a href="/">Back to Home Page</a></div>
 <div id="sidebar" style="padding:5px;">
-<h1>Click a pin to load teacher information</h1>
+<h1>
+Hover over a pin to see who lives there.
+<br /><br />
+Click a pin to load teacher information.
+</h1>
 </div>
 </div>
   </body>

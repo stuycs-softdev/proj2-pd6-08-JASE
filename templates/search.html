@@ -28,9 +28,10 @@
 	</div>
 	<div class="navbar-collapse collapse">
 	  <ul class="nav navbar-nav">
-	    <li class="active"><a href="/search">Home</a></li>
+	    <li class="active"><a href="/">Home</a></li>
 	    <li class="active"><a href="/about">About US</a></li>
 	    <li class="active"><a href="/stuylist">Stuyvesant Teachers</a></li>
+	    <li class="active"><a href="/all">Map of Where All Teachers Live</a></li>
 	  </ul>
 	</div>
       </div>
@@ -39,12 +40,11 @@
     <!--Search code -->
 <!--    <div class="container" style="text-align:center">-->
 <div class="col-md-1"></div>
-<div class="col-md-10">
-  <div style="text-align:center;">
+<div class="col-md-10" style="text-align:center;">
       {{ search | safe }}
 	<a href="/stuylist" class="btn btn-success btn-lg">View all the Stuyvesant Teachers Here!</a>
 	<a href="/department" class="btn btn-warning btn-lg">Search by Department</a>
-  </div>
+	<a href="all" class="btn btn-primary btn-lg">Map of Where All Teachers Live</a>
 
 	<br /><br />
 	{{table | safe}}

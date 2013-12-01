@@ -6,7 +6,7 @@ def num(a):
     return '{:,.0f}'.format(a)
 
 def table_overpaid(limit):
-    r = '<table class="table"><tr class="danger"><th colspan="4" style="text-align:center;">Top '+str(limit)+' Overpaid Teachers</td></tr><tr class="danger"><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
+    r = '<table class="table table-bordered"><tr class="danger"><th colspan="4" style="text-align:center;">Top '+str(limit)+' Overpaid Teachers</td></tr><tr class="danger"><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
 
     count = 0
     for x in stuyteachers.get_overpaid(limit):
@@ -19,7 +19,7 @@ def table_overpaid(limit):
     return r
 
 def table_underpaid(limit):
-    r = '<table class="table"><tr class="success"><th colspan="4" style="text-align:center;">Top '+str(limit)+' Underpaid Teachers</td></tr><tr class="success"><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
+    r = '<table class="table table-bordered"><tr class="success"><th colspan="4" style="text-align:center;">Top '+str(limit)+' Underpaid Teachers</td></tr><tr class="success"><th>&nbsp;</th><th>Teacher Name</th><th>Salary</th><th>Overall Rating</th></tr>'
 
     count = 0
     for x in stuyteachers.get_underpaid(limit):
@@ -36,7 +36,7 @@ def table_highestpaid(limit):
     return table_highest("salary","Top "+str(limit)+" Highest Paid Teachers","Salary",limit)
 
 def table_highest(param,table_title,column_title,limit):
-    r = '<table class="table"><tr class="active"><th colspan="4" style="text-align:center;">%s</td></tr><tr class="active"><th>&nbsp;</th><th>Teacher Name</th><th>%s</th></tr>'%(table_title,column_title)
+    r = '<table class="table table-bordered"><tr class="active"><th colspan="4" style="text-align:center;">%s</td></tr><tr class="active"><th>&nbsp;</th><th>Teacher Name</th><th>%s</th></tr>'%(table_title,column_title)
 
     count = 0
     for x in stuyteachers.get(param,-1,limit,0,True):
@@ -115,11 +115,11 @@ def table_get2(loop, offset):
     if offset == 0:
         r += """
 <table class="table table-bordered table-striped" id="sortTable">
-  <tr class="active"><th colspan="11" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
+  <tr class="active"><th colspan="12" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
 
   <tr class="active">
     <th colspan="5" style="text-align:center;">Teacher Information</th>
-    <th colspan="6" style="text-align:center;">Neighborhood Information</th>
+    <th colspan="7" style="text-align:center;">Neighborhood Information</th>
   </tr>
 
   <tr class="col_heads active">
@@ -133,9 +133,10 @@ def table_get2(loop, offset):
     <th><a href="javascript:void(0)" onclick="sort('zip_MedianIncome',-1)">Median<br />Income</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_MedianAge',-1)">Median<br />Age</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_CollegeDegreePercent',-1)">College<br />Graduates</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_WhitePercent',-1)">Percent<br />White</a></th>
+    <th><a href="javascript:void(0)" onclick="sort('zip_AsianPercent',-1)">Percent<br />Asian</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_BlackPercent',-1)">Percent<br />Black</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_HispanicEthnicityPercent',-1)">Percent<br />Hispanic</a></th>
+    <th><a href="javascript:void(0)" onclick="sort('zip_WhitePercent',-1)">Percent<br />White</a></th>
   </tr>
 """
 
@@ -164,23 +165,23 @@ def table_get2(loop, offset):
 
                 if "zipinfo" in x["address"][0].keys():
                     pk = x["address"][0]["zipinfo"]
-                    r += '<td>$%s</td><td>%d</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td></tr>'%(num(pk["MedianIncome"]),pk["MedianAge"],pk["CollegeDegreePercent"],pk["WhitePercent"],pk["BlackPercent"],pk["HispanicEthnicityPercent"])
+                    r += '<td>$%s</td><td>%d</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td></tr>'%(num(pk["MedianIncome"]),pk["MedianAge"],pk["CollegeDegreePercent"],pk["AsianPercent"],pk["BlackPercent"],pk["HispanicEthnicityPercent"],pk["AsianPercent"])
                 else:
-                    r += '<td colspan="2">No Information Found</td></tr>'
+                    r += '<td colspan="7">No Information Found</td></tr>'
 
             else:
-                r += '<td colspan="3">No address found</td></tr>'
+                r += '<td colspan="8">No address found</td></tr>'
 
             if len(x['address']) > 0:
                 r += '</tr><tr /><tr style="display:none" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
                 for y in range(1,len(x['address'])):
-                    r += '<tr><td style="font-weight:bold;">'+x["address"][y]["address"]+'</td><td style="padding-left:15px;">'+x["address"][y]["phoneNum"]+'</td><td colspan="2">&nbsp;</td></tr>'
+                    r += '<tr><td style="font-weight:bold;">'+x["address"][y]["address"]+'</td><td style="padding-left:15px;">'+x["address"][y]["phoneNum"]+'</td><td colspan="7">&nbsp;</td></tr>'
                 r += '</table></td></tr>'
 
 
 
     if offset == 0:
-        r += '<tr id="loadMore" class="active"><td colspan="5" style="text-align:center;"><a href="javascript:void(0)" onclick="loadMore()">Load More Results</a><br /><br /><a href="#">Back to Top</a></td></tr>'
+        r += '<tr id="loadMore" class="active"><td colspan="12" style="text-align:center;"><a href="javascript:void(0)" onclick="loadMore()">Load More Results</a><br /><br /><a href="#">Back to Top</a></td></tr>'
 
 
         r += '</table>'
