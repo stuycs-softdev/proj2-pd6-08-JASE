@@ -21,7 +21,9 @@ function stopLoading(){
 
 
 function updateSort(a,b){
-    $.get("/js?type=1&param="+a+"&sort="+b+"&offset=0",function(d){
+    c = location.href.split("name=")
+    s = c.length>1?"&name="+c[1].split("&")[0]:""
+    $.get("/js?type=1&param="+a+"&sort="+b+"&offset=0"+s,function(d){
 	$("#sortTable").before(d).remove();
 	$("td."+a).css("background","#ddddee");
     });
@@ -42,9 +44,12 @@ function sortDep(a,b){
     curOrder = curDepSort == a ? -curOrder : b;
     curDepSort = a;
     tab.sort(function(c,d){
-	var cc = c[1];
-	var dd = d[1];
-	return curOrder == 1 ? cc>dd : dd>cc;
+	var p=(c[a]+"").replace(/\D+/,"")*1
+	var i=(d[a]+"").replace(/\D+/,"")*1
+	return curOrder==1?p-i:i-p;
+//	var cc = c[1];
+//	var dd = d[1];
+//	return curOrder == 1 ? cc>dd : dd>cc;
 //	return curOrder == 1 ? c[a]>d[a] : d[a]>c[a];
 //	return curOrder == 1 ? c[a]-d[a] : d[a]-c[a];
     });

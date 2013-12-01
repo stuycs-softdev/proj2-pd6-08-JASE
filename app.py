@@ -286,6 +286,10 @@ def js():
     except:
         pass
 
+    nam = None
+    if "name" in request.args:
+        nam = request.args.get("name")
+
 
     try:
         return str(html.table_get(param,sort,limit,int(offset)))

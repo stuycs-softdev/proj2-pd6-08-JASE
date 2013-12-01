@@ -92,7 +92,7 @@ def searchCode(a):
 
 
 
-def table_get(param, sort, limit, offset=0,teachers=False):
+def table_get(param, sort, limit, offset=0):
     sort = int(sort)
     offset = int(offset)
     return table_get2(stuyteachers.get(param, sort, limit, offset),offset)
