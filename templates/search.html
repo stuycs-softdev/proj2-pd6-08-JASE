@@ -37,14 +37,20 @@
     </nav>
     
     <!--Search code -->
-    <div class="container" style="text-align:center">
-
+<!--    <div class="container" style="text-align:center">-->
+<div class="col-md-1"></div>
+<div class="col-md-10">
+  <div style="text-align:center;">
       {{ search | safe }}
 	<a href="/stuylist" class="btn btn-success btn-lg">View all the Stuyvesant Teachers Here!</a>
 	<a href="/department" class="btn btn-warning btn-lg">Search by Department</a>
+  </div>
+
 	<br /><br />
 	{{table | safe}}
-    </div>
+</div>
+<div class="col-md-1"></div>
+<!--    </div>-->
     
       
 
