@@ -411,7 +411,7 @@ def average_rmt():
 
 
 if __name__ == "__main__":
-                      
+    pass                      
 #    do_zipcode()
 
 #    c = MongoClient()
