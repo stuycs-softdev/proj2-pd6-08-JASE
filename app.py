@@ -15,7 +15,7 @@ fname = "data.txt"
 
 
 def num(a):
-    return '{:,d}'.format(a)
+    return '{:,.0f}'.format(a)
 
 
 
@@ -63,7 +63,7 @@ Clicking the above will search the internet for information about every teacher.
         except:
             pass
 
-        r += '<div class="alert alert-info">Teacher value calculated as the ratio between salary and <strong>ratemyteachers.com</strong> overall rating</div>'
+#        r += '<div class="alert alert-info">Teacher value calculated as the ratio between salary and <strong>ratemyteachers.com</strong> overall rating</div>'
 
         r += """
 <div class="alert alert-info" style="text-align:left;">
@@ -105,7 +105,6 @@ def teacher(n):
     d = stuyteachers.get_teacher(int(n))
 
     if d != None:
-        d['salary'] = num(d['salary'])
         r += """
 <h1>%(first)s %(last)s</h1>
 
@@ -114,8 +113,16 @@ def teacher(n):
 <tr class="active"><th colspan="2" style="text-align:center;">Basic Information</td></tr>
 <tr class="active"><td>First Name</td><td>%(first)s</td></tr>
 <tr class="active"><td>Last Name</td><td>%(last)s</td></tr>
-<tr class="active"><td>Title</td><td>%(title)s</td></tr>
-<tr class="active"><td>Yearly Salary</td><td>$%(salary)s<br /><small>[As of year %(salary_year)s]</small></td></tr>"""%(d)
+<tr class="active"><td>Title</td><td>%(title)s</td></tr>"""%(d)
+
+        if d["salary"] == -1:
+            r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold;">Salary data unavailable</td></tr>'
+        else:
+            d['salary'] = num(d['salary'])
+            r += '<tr class="active"><td>Yearly Salary</td><td>$%(salary)s<br /><small>[As of year %(salary_year)s]</small></td></tr>'%(d)
+
+
+
 
         if d["rmt_overall"] == -1:
             r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold;">Ratemyteachers.com information unavailable</td></tr>'
@@ -130,6 +137,44 @@ def teacher(n):
 </table>
 </td></tr>
 """%(d)
+
+        r += """
+</table>
+
+<table class="table table-bordered">
+<tr class="active"><td colspan="2" style="text-align:center;font-weight:bold;">Neighborhood Information</td></tr>
+"""
+        
+        if not (len(d["address"]) > 0 and "zipinfo" in d["address"][0].keys()):
+            r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold">Neighborhood information unavailable</td></tr>'
+
+        else:
+            r += '<tr class="active"><td colspan="2" style="text-align:center;">The population of <strong>%d</strong> is <em>%s</em></td></tr>'%(d["zip_zip"],num(d["zip_Population"]))
+            nb = [
+                ["Median Income","MedianIncome","$%s"],
+                ["Median Age","MedianAge","%d"],
+                ["College Graduates","CollegeDegreePercent","%.1f&#37;"],
+                [],
+                ["Percent Asian","AsianPercent","%.1f&#37;"],
+                ["Percent Black","BlackPercent","%.1f&#37;"],
+                ["Percent Hispanic","HispanicEthnicityPercent","%.1f&#37;"],
+                ["Percent White","WhitePercent","%.1f&#37;"],
+                [],
+                ["Percent Married","MarriedPercent","%.1f&#37;"],
+                ["Percent Divorced","DivorcedPercent","%.1f&#37;"]
+                ]
+
+            for z in nb:
+                if len(z) == 0:
+                    r += '<tr class="active"><td colspan="2" style="font-size:4px;">&nbsp;</td></tr>'
+                else:
+                    if z[2][0] == "$":
+                        r += '<tr class="active"><td>%s</td><td>%s</td></tr>'%(z[0],z[2]%(num(d["zip_"+z[1]])))
+                    else:
+                        r += '<tr class="active"><td>%s</td><td>%s</td></tr>'%(z[0],z[2]%(d["zip_"+z[1]]))
+
+
+            
 
         r += """
 </table>
@@ -149,7 +194,14 @@ def teacher(n):
 <div style="text-align:center;">
 <div class="btn-group">
 <button type="button" onclick="mapZoomOut()" class="btn btn-default">-</button>
-<button type="button" onclick="mapZoomIn()" class="btn btn-default">+</button><br />
+<button type="button" onclick="mapZoomIn()" class="btn btn-default">+</button>
+</div>
+<div class="btn-group">
+<button type="button" onclick="mapRoadMap()" class="btn btn-default">Normal Map</button>
+<button type="button" onclick="mapStreetView()" class="btn btn-default">Street View</button>
+</div>
+
+<br /><br />
 <img src="%s" id="mapImg" />
 </div>
 </td></tr>"""%(d["address"][0]["address"],gmap.gmap(d["address"][0]["address"]))
@@ -241,6 +293,144 @@ def js():
         return '{error:true}'
 
 
+@app.route("/teacherjs-<n>")
+def teacherjs(n):
+    r = ""
+
+    first = n.split("+")[0]
+
+    a = c.teachers.Collections.find_one({"first":first,"last":n.replace(first+"+","")})
+
+    path = ""
+    r += """ 
+<table class="table table-bordered">
+<tr class="active"><td colspan="2"><a href="teacher-%(id)d"><h1>%(first)s %(last)s</h1></a></td></tr>"""%(a)
+    r += '<tr class="active"><td colspan="2"><strong>%s</strong><br />%s'%(a["address"][0]["address"],a["address"][0]["phoneNum"])
+    r += """
+<tr class="active"><td>Title</td><td>%(title)s</td></tr>"""%(a)
+
+    if a["salary"] == -1:
+        r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold;">Salary data unavailable</td></tr>'
+    else:
+        a['salary'] = num(a["salary"])
+        r += '<tr class="active"><td>Yearly Salary</td><td>$%(salary)s<br /><small>[As of year %(salary_year)s]</small></td></tr>'%(a)
+
+    if a["rmt_overall"] == -1:
+        r += '<tr class="danger"><td colspan="2" style="text-align:center;font-weight:bold;">Ratemyteachers.com information unavailable</td></tr>'
+    else:
+        r += """
+<tr class="active"><td>Ratemyteachers.com</td><td>
+<table>
+  <tr><td style="font-weight:bold;">Overall</td><td style="font-weight:bold;">%(rmt_overall)d&#37;</td></tr>
+  <tr><td>Easiness</td><td> &nbsp; %(rmt_easiness)d</td></tr>
+  <tr><td>Helpfulness</td><td> &nbsp; %(rmt_helpfulness)d</td></tr>
+  <tr><td>Clarity</td><td> &nbsp; %(rmt_clarity)d</td></tr>
+</table>
+</td></tr>"""%(a)
+
+    r += '</table>'
+
+
+    if len(a["address"]) > 0 and len(a["address"][0]["directions"]["routes"]):
+        b = a["address"][0]["directions"]["routes"][0]["legs"][0]
+        path = str(a["address"][0]["directions"]["routes"][0]["legs"][0]["steps"])
+        r += """
+<div class="btn-group">
+<button class="btn btn-primary" onclick="viewDirections(0)">MTA Directions</button>
+<button class="btn btn-info" onclick="viewDirections(1)">CitiBike Directions</button>
+</div><br />
+<div class="panel panel-primary directions" style="display:none"><div class="panel-heading">MTA Information</div><div class="panel-body">
+<strong>Commute Distance to Stuyvesant:</strong> %s<br />
+<strong>Commute Time to Stuyvesant:</strong> %s<br />
+<div id="publicTransitDetails">&nbsp;</div>
+</div></div>"""%(b["distance"]["text"],b["duration"]["text"])
+
+        if "citibike" in a["address"][0].keys():
+            cc = a["address"][0]["citibike"]
+            r += """
+<div class="panel panel-info directions" style="display:none"><div class="panel-heading">CitiBike Information</div><div class="panel-body">
+<strong>Nearest CitiBike Station:</strong> %s<br />
+<strong>Walking Distance to CitiBike Station:</strong> %s<br />
+<strong>Walking Time to CitiBike Station:</strong> %s<br />
+<strong>CitiBike Distance to Stuyvesant:</strong> %s<br />
+<strong>CitiBike Time to Stuyvesant:</strong> %s<br />
+</div></div>"""%(cc["bike_station"],cc["walk_distance"],cc["walk_time"],cc["bike_distance"],cc["bike_time"])
+
+            r += """<script type="text/javascript">
+cb = ["%s","%s"];
+</script>"""%(cc["bike_polyline"]["points"].replace("\\","\\\\"),cc["walk_polyline"]["points"].replace("\\","\\\\"))
+
+        else:
+            r += """
+<div class="panel panel-info directions" style="display:none"><div class="panel-heading">CitiBike Information</div><div class="panel-body">
+Only available to teachers who live in Manhattan and Brooklyn</div></div>"""
+
+        r += """
+<script type="text/javascript">
+cp = %s;
+</script>
+"""%(path.replace("u'","'"))
+#        path = a["address"][0]["directions"]["routes"][0]["overview_polyline"]["points"]
+
+
+    return r
+#    return '%s %s'%(path,r)
+
+
+@app.route("/all")
+def showAll():
+    r = """
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="../static/stalkmyteachers.jpg">
+    <title>StalkMyTeachers - Map</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=geometry"></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <link href="../static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script>
+
+addr = ["""
+
+    k = []
+
+    for x in c.teachers.Collections.find():
+        if len(x["address"]) > 0 and "lat" in x["address"][0]:
+            k.append('["'+x["first"]+' '+x["last"]+'",'+str(x["address"][0]["lat"])+','+str(x["address"][0]["long"])+']')
+
+    r += ",".join(k)
+
+    r+= """];
+    </script>
+    <script type="text/javascript" src="static/maps.js"></script>
+  </head>
+  <body>
+      <div id="map-canvas"></div>
+      <div style="position:fixed;background:white;top:0;right:0;width:400px;z-index:999;height:100%;border-left:4px solid black;padding:0;overflow:auto;">
+<div style="text-align:center;border-bottom:2px solid black;padding:5px;"><a href="/">Back to Home Page</a></div>
+<div id="sidebar" style="padding:5px;">
+<h1>
+Hover over a pin to see who lives there.
+<br /><br />
+Click a pin to load teacher information.
+</h1>
+</div>
+</div>
+  </body>
+</html>
+"""
+    return r
+
+
 @app.route("/preload")
 def preload():
     f = open(fname,"r")
@@ -284,4 +474,4 @@ def loadall():
 
 if __name__ == "__main__":
     app.debug = True
-    app.run(host="0.0.0.0",port=5009)
+    app.run(host="0.0.0.0",port=6008)

@@ -21,6 +21,8 @@ from pymongo import MongoClient
 import pFinder # gets addresses and phone numbers
 import salary  # gets salary
 import ratemt  # ratemyteachers.com
+import zipcode # zipcode information
+
 
 c = MongoClient()
 
@@ -107,9 +109,26 @@ def teachersToDatabase():
 
 
     do_ratemyteachers()
+    distance.getTeachs()
+    citibike.updateTeachers()
+    do_zipcode()
 
     print("Done.")
     
+
+
+
+def fix_address(n):
+    r = []
+    
+    for x in n:
+        if "(212)" in x["phoneNum"] or "(718)" in x["phoneNum"] or "NeW York" in x["address"] or "Brooklyn" in x["address"]:
+            r.append(x)
+            n.remove(x)
+
+    if len(r) > 0:
+        return r
+    return n
 
 
 
@@ -173,6 +192,29 @@ def do_ratemyteachers():
 
 
 
+    
+
+
+def do_zipcode():
+    for x in c.teachers.Collections.find():
+        if len(x["address"]) > 0:
+            a = str(x["address"][0]["address"]).split(",")[1].lstrip().split(" ")[1]
+
+            k = zipcode.zipinfo(a)
+
+            x["address"][0]["zipinfo"] = k
+
+            try :
+                print("%s %s Median: $%d, College Graduate Percent: %d, White Percent: %d"%(x['first'],x['last'],k["MedianIncome"],k["CollegeDegreePercent"],k["WhitePercent"]))
+
+                c.teachers.Collections.update({"id":x['id']},{"$set":{"address":x["address"]}})
+                
+            except:
+                print("\t%s %s ===== ERROR"%(x['first'],x['last']))
+
+
+
+
 
 def teacher_update(x,k):
     c.ratemt.Collections.update({"id":k["id"]},{"$set":{"matched":True}})
@@ -194,7 +236,6 @@ def get(a,sort=1,limit=-1,offset=0,teachers=False):
 
     r = []
 
-
     k = c.teachers.Collections.find({a:{"$ne":-1}}).sort(a,sort).skip(offset)
     if teachers:
         count = 0
@@ -205,11 +246,16 @@ def get(a,sort=1,limit=-1,offset=0,teachers=False):
                 if count == limit:
                     break
     else:
-        if limit > 0 :
-            k = k.limit(limit)
+#        if limit > 0 :
+#            k = k.limit(limit)
     
+        count = 0
         for x in k: 
-            r.append(x)
+            if a in x.keys():
+                r.append(x)
+                count += 1
+                if count == limit:
+                    break
 
     return r
 
@@ -357,10 +403,34 @@ def average_rmt():
     k = c.teachers.Collections.find({"rmt_overall":{"$ne":-1}})
     for x in k:
         rmt.append(x['rmt_overall'])
-    return sum(rmt)/len(rmt)
+
+    if len(rmt) > 0:
+        return sum(rmt)/len(rmt)
+    else:
+        return 0
 
 
 if __name__ == "__main__":
+    pass                      
+#    do_zipcode()
+
+#    c = MongoClient()
+#    for x in c.teachers.Collections.find():
+#        if len(x["address"]) > 0:
+#            if "zipinfo" in x["address"][0].keys():
+#
+#                ar = {}
+#                
+#                for y in x["address"][0]["zipinfo"].keys():
+#                    ar["zip_"+y] = x["address"][0]["zipinfo"][y]
+#                    
+#                c.teachers.Collections.update({"id":x['id']},{"$set":ar},upsert=True)
+
+
+#    teachersToDatabase()
+
+
+
 #    c = MongoClient()
 #    c.ratemt.Collections.remove()
 #    print("Searching up results from ratemyteachers.com:")
@@ -372,6 +442,21 @@ if __name__ == "__main__":
 #        res[x]["id"] = x
 #        c.ratemt.Collections.insert(res[x])
 
-    teachersToDatabase()
+#    teachersToDatabase()
+
+#    for x in c.teachers.Collections.find():
+#        c.teachers.Collections.update({"id":x["id"]},{"$set":{"address2":x["address"],"address":None}},upsert=True)
+
+#    for x in c.teachers.Collections.find():
+#        c.teachers.Collections.update({"id":x["id"]},{"$set":{"address2":[]}},upsert=True)
+
+#    for x in c.teachers.Collections.find():
+#        print("%s %s"%(x['first'],x['last']))
+#        a = fix_address(pFinder.pFind(x["first"],x["last"]))
+#        if len(a) > 0:
+#            print(a[0]["address"].lstrip())
+#            c.teachers.Collections.update({"id":x["id"]},{"$set":{"address":a}},upsert=True)
+
+#    print(str(fix_address(pFinder.pFind("Mark","Halperin"))))
 
 #    do_ratemyteachers()
