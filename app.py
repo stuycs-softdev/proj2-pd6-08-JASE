@@ -155,13 +155,13 @@ def teacher(n):
                 ["Median Age","MedianAge","%d"],
                 ["College Graduates","CollegeDegreePercent","%.1f&#37;"],
                 [],
+                ["Percent Married","MarriedPercent","%.1f&#37;"],
+                ["Percent Divorced","DivorcedPercent","%.1f&#37;"],
+                [],
                 ["Percent Asian","AsianPercent","%.1f&#37;"],
                 ["Percent Black","BlackPercent","%.1f&#37;"],
                 ["Percent Hispanic","HispanicEthnicityPercent","%.1f&#37;"],
                 ["Percent White","WhitePercent","%.1f&#37;"],
-                [],
-                ["Percent Married","MarriedPercent","%.1f&#37;"],
-                ["Percent Divorced","DivorcedPercent","%.1f&#37;"]
                 ]
 
             for z in nb:
