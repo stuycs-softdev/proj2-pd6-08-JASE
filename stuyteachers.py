@@ -414,17 +414,17 @@ if __name__ == "__main__":
                       
 #    do_zipcode()
 
-    c = MongoClient()
-    for x in c.teachers.Collections.find():
-        if len(x["address"]) > 0:
-            if "zipinfo" in x["address"][0].keys():
-
-                ar = {}
-                
-                for y in x["address"][0]["zipinfo"].keys():
-                    ar["zip_"+y] = x["address"][0]["zipinfo"][y]
-                    
-                c.teachers.Collections.update({"id":x['id']},{"$set":ar},upsert=True)
+#    c = MongoClient()
+#    for x in c.teachers.Collections.find():
+#        if len(x["address"]) > 0:
+#            if "zipinfo" in x["address"][0].keys():
+#
+#                ar = {}
+#                
+#                for y in x["address"][0]["zipinfo"].keys():
+#                    ar["zip_"+y] = x["address"][0]["zipinfo"][y]
+#                    
+#                c.teachers.Collections.update({"id":x['id']},{"$set":ar},upsert=True)
 
 
 #    teachersToDatabase()
