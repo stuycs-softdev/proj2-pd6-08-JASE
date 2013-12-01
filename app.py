@@ -40,9 +40,9 @@ For your convenience, all teacher data has been preloaded using the option below
 </div>
 
 <div class="alert alert-warning">
-<div style="text-align:center;"><a href="/loadall" class="btn btn-warning btn-lg">Load from online</a></div><br />
-<div class="alert alert-danger"><strong>Warning:</strong> This option will take about 15-35 minutes</div><br />
-Clicking the above will search the internet for information about every teacher.  This will load roughly a thousand webpages to search for information and takes quite some time.  If you close your browser while using this option all information will be lost.
+<div style="text-align:center;font-size:25px;font-weight:bold;">Load from online</div><br />
+<div class="alert alert-danger"><strong>Warning:</strong> This option may take an hour or more.</div><br />
+Running the above code in command line will search the  internet for information about every teacher.  This loads thousands of webpages to search for information and takes quite some time.
 </div>
 
 </div>"""

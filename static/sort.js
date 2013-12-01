@@ -23,6 +23,7 @@ function stopLoading(){
 function updateSort(a,b){
     $.get("/js?type=1&param="+a+"&sort="+b+"&offset=0",function(d){
 	$("#sortTable").before(d).remove();
+	$("td."+a).css("background","#ddddee");
     });
 }
 

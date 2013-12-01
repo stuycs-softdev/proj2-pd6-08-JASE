@@ -115,11 +115,11 @@ def table_get2(loop, offset):
     if offset == 0:
         r += """
 <table class="table table-bordered table-striped" id="sortTable">
-  <tr class="active"><th colspan="12" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
+  <tr class="active"><th colspan="14" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
 
   <tr class="active">
     <th colspan="5" style="text-align:center;">Teacher Information</th>
-    <th colspan="7" style="text-align:center;">Neighborhood Information</th>
+    <th colspan="9" style="text-align:center;">Neighborhood Information</th>
   </tr>
 
   <tr class="col_heads active">
@@ -133,12 +133,27 @@ def table_get2(loop, offset):
     <th><a href="javascript:void(0)" onclick="sort('zip_MedianIncome',-1)">Median<br />Income</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_MedianAge',-1)">Median<br />Age</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_CollegeDegreePercent',-1)">College<br />Graduates</a></th>
+    <th><a href="javascript:void(0)" onclick="sort('zip_MarriedPercent',-1)">Percent<br />Married</a></th>
+    <th><a href="javascript:void(0)" onclick="sort('zip_DivorcedPercent',-1)">Percent<br />Divorced</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_AsianPercent',-1)">Percent<br />Asian</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_BlackPercent',-1)">Percent<br />Black</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_HispanicEthnicityPercent',-1)">Percent<br />Hispanic</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_WhitePercent',-1)">Percent<br />White</a></th>
   </tr>
 """
+
+
+    info = [
+        ["MedianIncome","$%s"],
+        ["MedianAge","%d"],
+        ["CollegeDegreePercent","%.1f&#37;"],
+        ["MarriedPercent","%.1f&#37;"],
+        ["DivorcedPercent","%.1f&#37;"],
+        ["AsianPercent","%.1f&#37;"],
+        ["BlackPercent","%.1f&#37;"],
+        ["HispanicEthnicityPercent","%.1f&#37;"],
+        ["WhitePercent","%.1f&#37;"]
+        ]
 
     count = offset
     for x in loop:
@@ -148,12 +163,12 @@ def table_get2(loop, offset):
             r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
 
             if x['salary'] != -1:
-                r += '<td>$%s</td>'%(num(x['salary']))
+                r += '<td class="salary">$%s</td>'%(num(x['salary']))
             else:
                 r += '<td style="font-style:italic;">No Data</td>'
         
             if x['rmt_overall'] != -1:
-                r += '<td style="text-align:center;">%(rmt_overall)d&#37;</td>'%(x)
+                r += '<td class="rmt_overall" style="text-align:center;">%(rmt_overall)d&#37;</td>'%(x)
             else:
                 r += '<td style="font-style:italic;text-align:center;">No Data</td>'
 
@@ -164,13 +179,31 @@ def table_get2(loop, offset):
 
 
                 if "zipinfo" in x["address"][0].keys():
-                    pk = x["address"][0]["zipinfo"]
-                    r += '<td>$%s</td><td>%d</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td></tr>'%(num(pk["MedianIncome"]),pk["MedianAge"],pk["CollegeDegreePercent"],pk["AsianPercent"],pk["BlackPercent"],pk["HispanicEthnicityPercent"],pk["AsianPercent"])
+
+                    for z in info:
+                        if z[1][0] == "$":
+                            r += '<td class="zip_%s">%s</td>'%(z[0],z[1]%(num(x["zip_"+z[0]])))
+                        else:
+                            r += '<td class="zip_%s">%s</td>'%(z[0],z[1]%(x["zip_"+z[0]]))
+
+#                    pk = x["address"][0]["zipinfo"]
+#                    r += """
+#<td>$%s</td>
+#<td>%d</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#</tr>
+#"""%(num(pk["MedianIncome"]),pk["MedianAge"],pk["CollegeDegreePercent"],pk["MarriedPercent"],pk["DivorcedPercent"],pk["AsianPercent"],pk["BlackPercent"],pk["HispanicEthnicityPercent"],pk["AsianPercent"])
                 else:
-                    r += '<td colspan="7">No Information Found</td></tr>'
+                    r += '<td colspan="9">No Information Found</td></tr>'
 
             else:
-                r += '<td colspan="8">No address found</td></tr>'
+                r += '<td colspan="10">No address found</td></tr>'
 
             if len(x['address']) > 0:
                 r += '</tr><tr /><tr style="display:none" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
