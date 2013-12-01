@@ -118,4 +118,5 @@ $(function(){
 	    $("#mapImg").attr("src","http://maps.googleapis.com/maps/api/staticmap?center="+a+"&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C"+a+"&sensor=false")
 	});
     }
+
 });

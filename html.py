@@ -115,19 +115,20 @@ def table_get2(loop, offset):
     if offset == 0:
         r += """
 <table class="table table-bordered table-striped" id="sortTable">
+<thead>
   <tr class="active"><th colspan="14" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
 
   <tr class="active">
-    <th colspan="5" style="text-align:center;">Teacher Information</th>
+    <th colspan="4" style="text-align:center;">Teacher Information</th>
     <th colspan="9" style="text-align:center;">Neighborhood Information</th>
   </tr>
 
   <tr class="col_heads active">
     <th>&nbsp;</th>
-    <th><a href="javascript:void(0)" onclick="sort('last',1)">Name</a></th>
+    <th style="min-width:300px;max-width:300px;"><a href="javascript:void(0)" onclick="sort('last',1)">Name</a></th>
     <th><a href="javascript:void(0)" onclick="sort('salary',-1)">Salary</a></th>
     <th><a href="javascript:void(0)" onclick="sort('rmt_overall',-1)">Overall<br />Rating</a></th>
-    <th>Address and Phone Number</th>
+<!--    <th>Address and Phone Number</th>-->
 
 
     <th><a href="javascript:void(0)" onclick="sort('zip_MedianIncome',-1)">Median<br />Income</a></th>
@@ -140,6 +141,7 @@ def table_get2(loop, offset):
     <th><a href="javascript:void(0)" onclick="sort('zip_HispanicEthnicityPercent',-1)">Percent<br />Hispanic</a></th>
     <th><a href="javascript:void(0)" onclick="sort('zip_WhitePercent',-1)">Percent<br />White</a></th>
   </tr>
+</thead><tbody>
 """
 
 
@@ -157,10 +159,18 @@ def table_get2(loop, offset):
 
     count = offset
     for x in loop:
+        addr = ""
 #        if not teachers or "Teacher" in x['title']:
         if True:
             count += 1
-            r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
+            r += '<tr><td>'+str(count)+'</td><td class="name"><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small>'%(x)
+
+            if len(x['address']) > 0:
+                r += '<br /><strong>%s</strong><br />%s'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
+                if len(x['address']) > 1:
+                    r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a>'
+            r += '</td>'
+
 
             if x['salary'] != -1:
                 r += '<td class="salary">$%s</td>'%(num(x['salary']))
@@ -172,19 +182,14 @@ def table_get2(loop, offset):
             else:
                 r += '<td style="font-style:italic;text-align:center;">No Data</td>'
 
-            if len(x['address']) > 0:
-                r += '<td><strong>%s</strong><br />%s'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
-                if len(x['address']) > 1:
-                    r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a></td>'
 
+            if len(x['address']) > 0 and "zipinfo" in x["address"][0].keys():
 
-                if "zipinfo" in x["address"][0].keys():
-
-                    for z in info:
-                        if z[1][0] == "$":
-                            r += '<td class="zip_%s">%s</td>'%(z[0],z[1]%(num(x["zip_"+z[0]])))
-                        else:
-                            r += '<td class="zip_%s">%s</td>'%(z[0],z[1]%(x["zip_"+z[0]]))
+                for z in info:
+                    if z[1][0] == "$":
+                        r += '<td class="zip_%s">%s</td>'%(z[0],z[1]%(num(x["zip_"+z[0]])))
+                    else:
+                        r += '<td class="zip_%s">%s</td>'%(z[0],z[1]%(x["zip_"+z[0]]))
 
 #                    pk = x["address"][0]["zipinfo"]
 #                    r += """
@@ -199,24 +204,25 @@ def table_get2(loop, offset):
 #<td>%.1f&#37;</td>
 #</tr>
 #"""%(num(pk["MedianIncome"]),pk["MedianAge"],pk["CollegeDegreePercent"],pk["MarriedPercent"],pk["DivorcedPercent"],pk["AsianPercent"],pk["BlackPercent"],pk["HispanicEthnicityPercent"],pk["AsianPercent"])
-                else:
-                    r += '<td colspan="9">No Information Found</td></tr>'
+#                else:
+#                    r += '<td colspan="9">No Information Found</td></tr>'
+
+                r += '</td></tr>'
 
             else:
                 r += '<td colspan="10">No address found</td></tr>'
 
             if len(x['address']) > 0:
-                r += '</tr><tr /><tr style="display:none" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
+                r += '<tr /><tr style="display:none" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="12"><table>'
                 for y in range(1,len(x['address'])):
                     r += '<tr><td style="font-weight:bold;">'+x["address"][y]["address"]+'</td><td style="padding-left:15px;">'+x["address"][y]["phoneNum"]+'</td><td colspan="7">&nbsp;</td></tr>'
                 r += '</table></td></tr>'
-
 
 
     if offset == 0:
         r += '<tr id="loadMore" class="active"><td colspan="12" style="text-align:center;"><a href="javascript:void(0)" onclick="loadMore()">Load More Results</a><br /><br /><a href="#">Back to Top</a></td></tr>'
 
 
-        r += '</table>'
+        r += '</tbody></table>'
 
     return r
