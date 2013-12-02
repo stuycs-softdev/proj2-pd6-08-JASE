@@ -25,6 +25,7 @@ function updateSort(a,b){
     s = c.length>1?"&name="+c[1].split("&")[0]:""
     $.get("/js?type=1&param="+a+"&sort="+b+"&offset=0"+s,function(d){
 	$("#sortTable").before(d).remove();
+	curSort = a
 	$("td."+a).css("background","#ddddee");
     });
 }
@@ -75,6 +76,7 @@ function loadMore(){
     offset += limit;
     $.get("/js?param="+curSort+"&sort="+curOrder+"&offset="+offset,function(d){
 	$("#loadMore").before(d);
+	$("td."+curSort).css("background","#ddddee");
     });
 }
 

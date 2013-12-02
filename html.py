@@ -111,16 +111,34 @@ def table_get2(loop, offset):
 #    sort = int(sort)
 #    offset = int(offset)
 
+
+
+    info = [
+        ["zip","%d","Zip_Code"],
+        ["MedianIncome","$%s","Median Income"],
+        ["MedianAge","%d","Median Age"],
+        ["CollegeDegreePercent","%.1f&#37;","College Graduates"],
+        ["MarriedPercent","%.1f&#37;","Percent Married"],
+        ["DivorcedPercent","%.1f&#37;","Percent Divorced"],
+        ["CostOfLivingIndex","%.1f","Cost_of Living_Index"]#,
+#        ["AsianPercent","%.1f&#37;","Percent Asian"],
+#        ["BlackPercent","%.1f&#37;","Percent Black"],
+#        ["HispanicEthnicityPercent","%.1f&#37;","Percent Hispanic"],
+#        ["WhitePercent","%.1f&#37;","Percent White"]
+        ]
+
+
+
     r = ""
     if offset == 0:
         r += """
 <table class="table table-bordered table-striped" id="sortTable">
 <thead>
-  <tr class="active"><th colspan="14" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
+  <tr class="active"><th colspan="%d" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
 
   <tr class="active">
     <th colspan="4" style="text-align:center;">Teacher Information</th>
-    <th colspan="9" style="text-align:center;">Neighborhood Information</th>
+    <th colspan="%d" style="text-align:center;">Zip Code Information</th>
   </tr>
 
   <tr class="col_heads active">
@@ -129,33 +147,28 @@ def table_get2(loop, offset):
     <th><a href="javascript:void(0)" onclick="sort('salary',-1)">Salary</a></th>
     <th><a href="javascript:void(0)" onclick="sort('rmt_overall',-1)">Overall<br />Rating</a></th>
 <!--    <th>Address and Phone Number</th>-->
+"""%(+len(info),len(info))
 
 
-    <th><a href="javascript:void(0)" onclick="sort('zip_MedianIncome',-1)">Median<br />Income</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_MedianAge',-1)">Median<br />Age</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_CollegeDegreePercent',-1)">College<br />Graduates</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_MarriedPercent',-1)">Percent<br />Married</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_DivorcedPercent',-1)">Percent<br />Divorced</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_AsianPercent',-1)">Percent<br />Asian</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_BlackPercent',-1)">Percent<br />Black</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_HispanicEthnicityPercent',-1)">Percent<br />Hispanic</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_WhitePercent',-1)">Percent<br />White</a></th>
+        for x in info:
+            r += """
+<th><a href="javascript:void(0)" onclick="sort('zip_%s',-1)">%s</a></th>"""%(x[0],("<br />".join(x[2].split(" "))).replace("_"," "))
+
+#    <th><a href="javascript:void(0)" onclick="sort('zip_MedianAge',-1)">Median<br />Age</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_CollegeDegreePercent',-1)">College<br />Graduates</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_MarriedPercent',-1)">Percent<br />Married</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_DivorcedPercent',-1)">Percent<br />Divorced</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_AsianPercent',-1)">Percent<br />Asian</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_BlackPercent',-1)">Percent<br />Black</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_HispanicEthnicityPercent',-1)">Percent<br />Hispanic</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_WhitePercent',-1)">Percent<br />White</a></th>
+
+        r += """
   </tr>
 </thead><tbody>
 """
 
 
-    info = [
-        ["MedianIncome","$%s"],
-        ["MedianAge","%d"],
-        ["CollegeDegreePercent","%.1f&#37;"],
-        ["MarriedPercent","%.1f&#37;"],
-        ["DivorcedPercent","%.1f&#37;"],
-        ["AsianPercent","%.1f&#37;"],
-        ["BlackPercent","%.1f&#37;"],
-        ["HispanicEthnicityPercent","%.1f&#37;"],
-        ["WhitePercent","%.1f&#37;"]
-        ]
 
     count = offset
     for x in loop:
