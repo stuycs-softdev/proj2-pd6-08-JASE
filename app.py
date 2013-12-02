@@ -7,6 +7,7 @@ import json
 import stuyteachers
 import html
 import gmap
+import gimages
 
 app = Flask(__name__)
 c = MongoClient()
@@ -108,7 +109,27 @@ def teacher(n):
         r += """
 <h1>%(first)s %(last)s</h1>
 
-<div class="col-md-4">
+<div class="col-md-4">"""%(d)
+
+        try:
+            img = gimages.gImages(d['first'],d['last'])
+            r += """
+<table class="table table-bordered">
+<tr class="active"><td style="font-weight:bold;text-align:center;">Google Images Result</td></tr>
+<tr class="active"><td style="text-align:center;"><img src="%s" style="width:%spx;height:%spx;" /></td></tr>
+</table>
+"""%(img[2],img[0],img[1])
+            
+        except:
+
+            r += """
+<table class="table table-bordered">
+<tr class="active"><td style="font-weight:bold;text-align:center;">Google Images Result</td></tr>
+<tr class="active"><td style="text-align:center;">Error: Teacher too sexy, no results found.</td></tr>
+</table>"""
+
+
+        r += """
 <table class="table" style="border:1px solid rgb(221, 221, 221);">
 <tr class="active"><th colspan="2" style="text-align:center;">Basic Information</td></tr>
 <tr class="active"><td>First Name</td><td>%(first)s</td></tr>
@@ -142,7 +163,7 @@ def teacher(n):
 </table>
 
 <table class="table table-bordered">
-<tr class="active"><td colspan="2" style="text-align:center;font-weight:bold;">Neighborhood Information</td></tr>
+<tr class="active"><td colspan="2" style="text-align:center;font-weight:bold;">Zip Code Information</td></tr>
 """
         
         if not (len(d["address"]) > 0 and "zipinfo" in d["address"][0].keys()):
