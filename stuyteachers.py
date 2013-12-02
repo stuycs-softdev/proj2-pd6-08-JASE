@@ -236,7 +236,7 @@ def get(a,sort=1,limit=-1,offset=0,teachers=False):
 
     r = []
 
-    k = c.teachers.Collections.find({a:{"$ne":-1}}).sort(a,sort).skip(offset)
+    k = c.teachers.Collections.find({a:{"$ne":-1}}).sort(a,sort)#.skip(offset)
     if teachers:
         count = 0
         for x in k:
@@ -248,14 +248,18 @@ def get(a,sort=1,limit=-1,offset=0,teachers=False):
     else:
 #        if limit > 0 :
 #            k = k.limit(limit)
-    
+
         count = 0
-        for x in k: 
+        for x in k:
             if a in x.keys():
                 r.append(x)
                 count += 1
-                if count == limit:
+                if count == limit+offset:
                     break
+
+        for x in range(0,offset):
+            r.remove(r[0])
+                    
 
     return r
 
@@ -411,7 +415,8 @@ def average_rmt():
 
 
 if __name__ == "__main__":
-    pass                      
+    teachersToDatabase()
+#    pass                      
 #    do_zipcode()
 
 #    c = MongoClient()

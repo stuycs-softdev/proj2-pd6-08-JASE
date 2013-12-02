@@ -92,7 +92,7 @@ def searchCode(a):
 
 
 
-def table_get(param, sort, limit, offset=0,teachers=False):
+def table_get(param, sort, limit, offset=0):
     sort = int(sort)
     offset = int(offset)
     return table_get2(stuyteachers.get(param, sort, limit, offset),offset)
@@ -111,79 +111,131 @@ def table_get2(loop, offset):
 #    sort = int(sort)
 #    offset = int(offset)
 
+
+
+    info = [
+        ["zip","%d","Zip_Code"],
+        ["MedianIncome","$%s","Median Income"],
+        ["MedianAge","%d","Median Age"],
+        ["CollegeDegreePercent","%.1f&#37;","College Graduates"],
+        ["MarriedPercent","%.1f&#37;","Percent Married"],
+        ["DivorcedPercent","%.1f&#37;","Percent Divorced"],
+        ["CostOfLivingIndex","%.1f","Cost_of Living_Index"]#,
+#        ["AsianPercent","%.1f&#37;","Percent Asian"],
+#        ["BlackPercent","%.1f&#37;","Percent Black"],
+#        ["HispanicEthnicityPercent","%.1f&#37;","Percent Hispanic"],
+#        ["WhitePercent","%.1f&#37;","Percent White"]
+        ]
+
+
+
     r = ""
     if offset == 0:
         r += """
 <table class="table table-bordered table-striped" id="sortTable">
-  <tr class="active"><th colspan="12" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
+<thead>
+  <tr class="active"><th colspan="%d" style="font-style:italic;text-align:center;">Click a column header below to sort</th></tr>
 
   <tr class="active">
-    <th colspan="5" style="text-align:center;">Teacher Information</th>
-    <th colspan="7" style="text-align:center;">Neighborhood Information</th>
+    <th colspan="4" style="text-align:center;">Teacher Information</th>
+    <th colspan="%d" style="text-align:center;">Zip Code Information</th>
   </tr>
 
   <tr class="col_heads active">
     <th>&nbsp;</th>
-    <th><a href="javascript:void(0)" onclick="sort('last',1)">Name</a></th>
+    <th style="min-width:300px;max-width:300px;"><a href="javascript:void(0)" onclick="sort('last',1)">Name</a></th>
     <th><a href="javascript:void(0)" onclick="sort('salary',-1)">Salary</a></th>
     <th><a href="javascript:void(0)" onclick="sort('rmt_overall',-1)">Overall<br />Rating</a></th>
-    <th>Address and Phone Number</th>
+<!--    <th>Address and Phone Number</th>-->
+"""%(4+len(info),len(info))
 
 
-    <th><a href="javascript:void(0)" onclick="sort('zip_MedianIncome',-1)">Median<br />Income</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_MedianAge',-1)">Median<br />Age</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_CollegeDegreePercent',-1)">College<br />Graduates</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_AsianPercent',-1)">Percent<br />Asian</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_BlackPercent',-1)">Percent<br />Black</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_HispanicEthnicityPercent',-1)">Percent<br />Hispanic</a></th>
-    <th><a href="javascript:void(0)" onclick="sort('zip_WhitePercent',-1)">Percent<br />White</a></th>
+        for x in info:
+            r += """
+<th><a href="javascript:void(0)" onclick="sort('zip_%s',-1)">%s</a></th>"""%(x[0],("<br />".join(x[2].split(" "))).replace("_"," "))
+
+#    <th><a href="javascript:void(0)" onclick="sort('zip_MedianAge',-1)">Median<br />Age</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_CollegeDegreePercent',-1)">College<br />Graduates</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_MarriedPercent',-1)">Percent<br />Married</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_DivorcedPercent',-1)">Percent<br />Divorced</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_AsianPercent',-1)">Percent<br />Asian</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_BlackPercent',-1)">Percent<br />Black</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_HispanicEthnicityPercent',-1)">Percent<br />Hispanic</a></th>
+#    <th><a href="javascript:void(0)" onclick="sort('zip_WhitePercent',-1)">Percent<br />White</a></th>
+
+        r += """
   </tr>
+</thead><tbody>
 """
+
+
 
     count = offset
     for x in loop:
+        addr = ""
 #        if not teachers or "Teacher" in x['title']:
         if True:
             count += 1
-            r += '<tr><td>'+str(count)+'</td><td><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small></td>'%(x)
+            r += '<tr><td>'+str(count)+'</td><td class="name"><a href="teacher-%(id)d">%(first)s %(last)s</a><br /><small>%(title)s</small>'%(x)
+
+            if len(x['address']) > 0:
+                r += '<br /><strong>%s</strong><br />%s'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
+                if len(x['address']) > 1:
+                    r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a>'
+            r += '</td>'
+
 
             if x['salary'] != -1:
-                r += '<td>$%s</td>'%(num(x['salary']))
+                r += '<td class="salary">$%s</td>'%(num(x['salary']))
             else:
                 r += '<td style="font-style:italic;">No Data</td>'
         
             if x['rmt_overall'] != -1:
-                r += '<td style="text-align:center;">%(rmt_overall)d&#37;</td>'%(x)
+                r += '<td class="rmt_overall" style="text-align:center;">%(rmt_overall)d&#37;</td>'%(x)
             else:
                 r += '<td style="font-style:italic;text-align:center;">No Data</td>'
 
-            if len(x['address']) > 0:
-                r += '<td><strong>%s</strong><br />%s'%(x['address'][0]['address'],x['address'][0]['phoneNum'])
-                if len(x['address']) > 1:
-                    r += '<br /><a href="javascript:void(0)" onclick="viewmore(this)">[Show '+str(len(x['address'])-1)+' other possible addresses]</a></td>'
 
+            if len(x['address']) > 0 and "zipinfo" in x["address"][0].keys():
 
-                if "zipinfo" in x["address"][0].keys():
-                    pk = x["address"][0]["zipinfo"]
-                    r += '<td>$%s</td><td>%d</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td><td>%.1f&#37;</td></tr>'%(num(pk["MedianIncome"]),pk["MedianAge"],pk["CollegeDegreePercent"],pk["AsianPercent"],pk["BlackPercent"],pk["HispanicEthnicityPercent"],pk["AsianPercent"])
-                else:
-                    r += '<td colspan="7">No Information Found</td></tr>'
+                for z in info:
+                    if z[1][0] == "$":
+                        r += '<td class="zip_%s">%s</td>'%(z[0],z[1]%(num(x["zip_"+z[0]])))
+                    else:
+                        r += '<td class="zip_%s">%s</td>'%(z[0],z[1]%(x["zip_"+z[0]]))
+
+#                    pk = x["address"][0]["zipinfo"]
+#                    r += """
+#<td>$%s</td>
+#<td>%d</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#<td>%.1f&#37;</td>
+#</tr>
+#"""%(num(pk["MedianIncome"]),pk["MedianAge"],pk["CollegeDegreePercent"],pk["MarriedPercent"],pk["DivorcedPercent"],pk["AsianPercent"],pk["BlackPercent"],pk["HispanicEthnicityPercent"],pk["AsianPercent"])
+#                else:
+#                    r += '<td colspan="9">No Information Found</td></tr>'
+
+                r += '</td></tr>'
 
             else:
-                r += '<td colspan="8">No address found</td></tr>'
+                r += '<td colspan="10">No address found</td></tr>'
 
             if len(x['address']) > 0:
-                r += '</tr><tr /><tr style="display:none" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="4"><table>'
+                r += '<tr /><tr style="display:none" id="addr'+str(x["id"])+'"><td>&nbsp;</td><td colspan="12"><table>'
                 for y in range(1,len(x['address'])):
                     r += '<tr><td style="font-weight:bold;">'+x["address"][y]["address"]+'</td><td style="padding-left:15px;">'+x["address"][y]["phoneNum"]+'</td><td colspan="7">&nbsp;</td></tr>'
                 r += '</table></td></tr>'
-
 
 
     if offset == 0:
         r += '<tr id="loadMore" class="active"><td colspan="12" style="text-align:center;"><a href="javascript:void(0)" onclick="loadMore()">Load More Results</a><br /><br /><a href="#">Back to Top</a></td></tr>'
 
 
-        r += '</table>'
+        r += '</tbody></table>'
 
     return r
