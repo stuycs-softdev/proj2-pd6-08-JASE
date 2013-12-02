@@ -147,7 +147,7 @@ def table_get2(loop, offset):
     <th><a href="javascript:void(0)" onclick="sort('salary',-1)">Salary</a></th>
     <th><a href="javascript:void(0)" onclick="sort('rmt_overall',-1)">Overall<br />Rating</a></th>
 <!--    <th>Address and Phone Number</th>-->
-"""%(+len(info),len(info))
+"""%(4+len(info),len(info))
 
 
         for x in info:
