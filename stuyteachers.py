@@ -22,7 +22,7 @@ import pFinder # gets addresses and phone numbers
 import salary  # gets salary
 import ratemt  # ratemyteachers.com
 import zipcode # zipcode information
-
+import gimages
 
 c = MongoClient()
 
@@ -414,8 +414,11 @@ def average_rmt():
         return 0
 
 
+
+
 if __name__ == "__main__":
-    teachersToDatabase()
+    do_gimages()
+#    teachersToDatabase()
 #    pass                      
 #    do_zipcode()
 
