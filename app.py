@@ -43,7 +43,7 @@ For your convenience, all teacher data has been preloaded using the option below
 <div class="alert alert-warning">
 <div style="text-align:center;font-size:25px;font-weight:bold;">Load from online</div><br />
 <div class="alert alert-danger"><strong>Warning:</strong> This option may take an hour or more.</div><br />
-Running the above code in command line will search the  internet for information about every teacher.  This loads thousands of webpages to search for information and takes quite some time.
+Running <strong>python stuyteachers.py</strong> in command line and the program will search the internet for information about every teacher.  This loads thousands of webpages to search for information and takes quite some time.
 </div>
 
 </div>"""
