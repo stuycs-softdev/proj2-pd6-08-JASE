@@ -3,11 +3,18 @@ StalkMyTeachers
 
 Presentation by Andrew Zarenberg, Simon Chen, Jia Sen Wu, and Eli Cohen.
 
-**Sites used:**
-- Google Images + Maps (API)
-- PeopleFinder (scrape)
-- RateMyTeachers (scrape)
-- stuy.edu (scrape)
+
+**APIs used:**
+- Google Maps
+- Google Images
+- CitiBike
+
+**Sites scraped:**
+- stuy.enschool.org
+- PeopleFinder.com 
+- RateMyTeachers.com
+- zipwho.com 
+
 
 We will create a site that gives a teacher's rating,a potential address,a picture, and directions to where they live.
 

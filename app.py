@@ -7,6 +7,7 @@ import json
 import stuyteachers
 import html
 import gmap
+import gimages
 
 app = Flask(__name__)
 c = MongoClient()
@@ -40,9 +41,9 @@ For your convenience, all teacher data has been preloaded using the option below
 </div>
 
 <div class="alert alert-warning">
-<div style="text-align:center;"><a href="/loadall" class="btn btn-warning btn-lg">Load from online</a></div><br />
-<div class="alert alert-danger"><strong>Warning:</strong> This option will take about 15-35 minutes</div><br />
-Clicking the above will search the internet for information about every teacher.  This will load roughly a thousand webpages to search for information and takes quite some time.  If you close your browser while using this option all information will be lost.
+<div style="text-align:center;font-size:25px;font-weight:bold;">Load from online</div><br />
+<div class="alert alert-danger"><strong>Warning:</strong> This option may take an hour or more.</div><br />
+Running <strong>python stuyteachers.py</strong> in command line and the program will search the internet for information about every teacher.  This loads thousands of webpages to search for information and takes quite some time.
 </div>
 
 </div>"""
@@ -108,7 +109,27 @@ def teacher(n):
         r += """
 <h1>%(first)s %(last)s</h1>
 
-<div class="col-md-4">
+<div class="col-md-4">"""%(d)
+
+        try:
+            img = gimages.gImages(d['first'],d['last'])
+            r += """
+<table class="table table-bordered">
+<tr class="active"><td style="font-weight:bold;text-align:center;">Google Images Result</td></tr>
+<tr class="active"><td style="text-align:center;"><img src="%s" style="width:%spx;height:%spx;" /></td></tr>
+</table>
+"""%(img[2],img[0],img[1])
+            
+        except:
+
+            r += """
+<table class="table table-bordered">
+<tr class="active"><td style="font-weight:bold;text-align:center;">Google Images Result</td></tr>
+<tr class="active"><td style="text-align:center;">Error: Teacher too sexy, no results found.</td></tr>
+</table>"""
+
+
+        r += """
 <table class="table" style="border:1px solid rgb(221, 221, 221);">
 <tr class="active"><th colspan="2" style="text-align:center;">Basic Information</td></tr>
 <tr class="active"><td>First Name</td><td>%(first)s</td></tr>
@@ -142,7 +163,7 @@ def teacher(n):
 </table>
 
 <table class="table table-bordered">
-<tr class="active"><td colspan="2" style="text-align:center;font-weight:bold;">Neighborhood Information</td></tr>
+<tr class="active"><td colspan="2" style="text-align:center;font-weight:bold;">Zip Code Information</td></tr>
 """
         
         if not (len(d["address"]) > 0 and "zipinfo" in d["address"][0].keys()):
@@ -155,13 +176,13 @@ def teacher(n):
                 ["Median Age","MedianAge","%d"],
                 ["College Graduates","CollegeDegreePercent","%.1f&#37;"],
                 [],
+                ["Percent Married","MarriedPercent","%.1f&#37;"],
+                ["Percent Divorced","DivorcedPercent","%.1f&#37;"],
+                [],
                 ["Percent Asian","AsianPercent","%.1f&#37;"],
                 ["Percent Black","BlackPercent","%.1f&#37;"],
                 ["Percent Hispanic","HispanicEthnicityPercent","%.1f&#37;"],
                 ["Percent White","WhitePercent","%.1f&#37;"],
-                [],
-                ["Percent Married","MarriedPercent","%.1f&#37;"],
-                ["Percent Divorced","DivorcedPercent","%.1f&#37;"]
                 ]
 
             for z in nb:
@@ -285,6 +306,10 @@ def js():
         offset = request.args.get("offset")
     except:
         pass
+
+    nam = None
+    if "name" in request.args:
+        nam = request.args.get("name")
 
 
     try:
